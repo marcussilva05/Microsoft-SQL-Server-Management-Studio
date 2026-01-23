@@ -1,6 +1,15 @@
 *************************** COMANDOS *********************************
 -- Qual bd estou?              
-SELECT DB_NAME(); 
+SELECT DB_NAME();
+
+-- Listar todos os bd
+SELECT name FROM sys.databases ORDER BY name;
+
+-- Conecte ao banco nome_do_banco
+USE nome_do_banco;
+
+-- Informações completas
+EXEC sp_helpdb 'nome_do_banco';
 
 Bancos de Dados
 sql
