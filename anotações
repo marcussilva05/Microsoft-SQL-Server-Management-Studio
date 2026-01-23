@@ -1,1 +1,168 @@
+***************************    PRINCIPAIS ATALHOS DE TECLADO DO SSMS *********************************
+🔧 GERAL / NAVEGAÇÃO
+Atalho	Ação
+Ctrl + N	Nova janela de query
+Ctrl + O	Abrir arquivo .sql
+Ctrl + S	Salvar query atual
+Ctrl + Shift + S	Salvar todas as queries
+Ctrl + F4	Fechar janela atual
+Ctrl + Tab	Alternar entre janelas abertas
+F7	Object Explorer Details
+F8	Object Explorer (liga/desliga)
+📝 EDIÇÃO DE CÓDIGO
+Atalho	Ação
+Ctrl + Espaço	IntelliSense (autocomplete)
+Ctrl + Shift + R	Atualizar IntelliSense local
+Tab	Autocompletar (quando sugerido)
+Ctrl + K, Ctrl + C	Comentar linhas selecionadas
+Ctrl + K, Ctrl + U	Descomentar linhas
+Ctrl + K, Ctrl + K	Adicionar/remover bookmark
+Ctrl + K, Ctrl + N	Próximo bookmark
+Ctrl + Shift + L	Minúsculas para seleção
+Ctrl + Shift + U	Maiúsculas para seleção
+Ctrl + L	Limpar tela (equivalente a CLS)
+Ctrl + Shift + V	Colar histórico da clipboard
+▶ EXECUÇÃO DE QUERIES
+Atalho	Ação
+F5	Executar query (tudo ou seleção)
+Ctrl + E	Executar query (alternativo)
+Alt + F5	Executar com Debug
+Ctrl + Shift + E	Executar query com resultados em texto
+Ctrl + R	Mostrar/ocultar painel Results
+Ctrl + Shift + F	Resultados em arquivo
+Shift + F5	Parar execução (Query → Cancel)
+Ctrl + T	Resultados em texto
+Ctrl + D	Resultados em grid (padrão)
+Ctrl + Shift + T	Abrir nova aba de resultados
+🔍 BUSCA E SUBSTITUIÇÃO
+Atalho	Ação
+Ctrl + F	Buscar na query atual
+Ctrl + H	Buscar e substituir
+Ctrl + Shift + F	Buscar em arquivos (Find in Files)
+Ctrl + Shift + H	Substituir em arquivos
+F3	Próxima ocorrência da busca
+Shift + F3	Ocorrência anterior
+📊 OBJECT EXPLORER
+Atalho	Ação
+F8	Alternar Object Explorer
+F5	Refresh no Object Explorer
+Ctrl + Alt + T	Mostrar/ocultar Template Explorer
+Ctrl + Alt + S	Mostrar/ocultar Object Explorer Details
+Ctrl + Alt + L	Mostrar/ocultar Solution Explorer
+📁 GERENCIAMENTO DE ARQUIVOS
+Atalho	Ação
+Ctrl + Shift + P	Abrir Project
+Ctrl + Shift + O	Abrir Solution
+Ctrl + Shift + A	Adicionar item ao projeto
+Ctrl + Shift + B	Build Solution
+🐛 DEBUG / DEPURAÇÃO
+Atalho	Ação
+F9	Adicionar/remover breakpoint
+F10	Step Over
+F11	Step Into
+Shift + F11	Step Out
+F5	Continuar (Continue)
+Ctrl + Shift + F5	Parar debug
+Ctrl + Alt + P	Anexar ao processo
+📋 CLIPBOARD / SELEÇÃO
+Atalho	Ação
+Ctrl + C	Copiar
+Ctrl + X	Recortar
+Ctrl + V	Colar
+Ctrl + Shift + Insert	Colar coluna (column mode)
+Alt + Shift + Seta	Seleção em bloco (column selection)
+Ctrl + Shift + U	Converter para UPPERCASE
+Ctrl + Shift + L	Converter para lowercase
+🎯 NAVEGAÇÃO NO CÓDIGO
+Atalho	Ação
+Ctrl + G	Ir para linha específica
+Ctrl + -	Voltar para local anterior
+Ctrl + Shift + -	Avançar para próximo local
+Ctrl + ]	Ir para bracket correspondente
+F12	Ir para definição (Go to Definition)
+📄 FORMATAR CÓDIGO
+Atalho	Ação
+Ctrl + K, Ctrl + D	Formatar documento todo
+Ctrl + K, Ctrl + F	Formatar seleção
+Ctrl + K, Ctrl + Y	Format T-SQL snippet
+🖥️ JANELAS E LAYOUT
+Atalho	Ação
+Ctrl + U	Mudar banco de dados (dropdown)
+Ctrl + Alt + B	Bookmark Window
+*Ctrl + *	Output Window
+Ctrl + Alt + O	Error List
+Ctrl + W	Close current window tab
+💾 BANCO DE DADOS
+Atalho	Ação
+Alt + PgUp/PgDn	Alternar entre abas de resultados
+Ctrl + Shift + U	Conectar ao servidor
+Ctrl + U	Usar banco (Use Database)
+🔗 SQLCMD MODE
+Atalho	Ação
+Ctrl + Shift + C	Copiar com headers
+Ctrl + Shift + M	Especificar valores para template
+🎮 ATALHOS PERSONALIZÁVEIS
+Para ver/alterar atalhos:
 
+Tools → Options
+
+Environment → Keyboard
+
+Ou: Tools → Customize → Keyboard
+
+📌 ATALHOS MAIS USADOS NO DIA A DIA:
+Fluxo básico de trabalho:
+Ctrl + N → Nova query
+
+Digitar código com Ctrl + Espaço (IntelliSense)
+
+Ctrl + K, Ctrl + D → Formatar
+
+F5 → Executar
+
+Ctrl + R → Ver resultados
+
+Ctrl + S → Salvar
+
+Debug rápido:
+F9 → Colocar breakpoint
+
+Alt + F5 → Executar com debug
+
+F11 → Step Into
+
+Shift + F5 → Parar debug
+
+Navegação eficiente:
+Ctrl + G → Ir para linha 100
+
+Ctrl + F → Buscar "SELECT"
+
+F3 → Próxima ocorrência
+
+Ctrl + H → Substituir "tabela" por "view"
+
+💡 DICAS EXTRAS:
+Sequências de múltiplas teclas:
+bash
+# Comentar código:
+Ctrl + K → Soltar → Ctrl + C
+
+# Adicionar bookmark:
+Ctrl + K → Soltar → Ctrl + K
+
+# Formatar documento:
+Ctrl + K → Soltar → Ctrl + D
+Atalhos específicos para resultados:
+Ctrl + D: Grid view
+
+Ctrl + T: Text view
+
+Ctrl + Shift + F: File results
+
+Ctrl + D, Ctrl + T: Alternar entre views
+
+Para ver todos os atalhos:
+No SSMS: Help → Keyboard Shortcuts
+
+***************************    PRINCIPAIS ATALHOS DE TECLADO DO SSMS *********************************
