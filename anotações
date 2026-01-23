@@ -4,8 +4,8 @@ QUERY: Significa: Consulta ou Pergunta ao banco de dados. É uma solicitação d
 
 Termo	                   Significado no SSMS	                              Exemplo
 Query	                   Instrução SQL individual	SELECT                    * FROM tabela
-Script	                  Conjunto de queries em uma janela/arquivo	        Arquivo .sql com 10 comandos
-Janela de Query	          Onde você digita scripts/queries	                  Área branca do SSMS
+Script	                 Conjunto de queries em uma janela/arquivo	        Arquivo .sql com 10 comandos
+Janela de Query	         Onde você digita scripts/queries	                  Área branca do SSMS
 Executar	               Processar o script/query	                          Botão F5
 ***************************    CONCEITOS *********************************
 
