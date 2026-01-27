@@ -18,7 +18,7 @@ SELECT TOP 10 * FROM nome_do_banco
 SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
 
 -- Criar a tabela temporária 
-CREATE TABLE #temp_URE AS
+CREATE TABLE #temp_nome AS
 SELECT * FROM  nome_do_banco;
 
 -- Criar a tabela temporária com valores específicos da coluna de interesse
@@ -30,6 +30,21 @@ WHERE NOMEDE IN (
     'dado_pesquisado_02', 
     'dado_pesquisado_03' 
 );
+
+-- Limpar a tabela criada
+DROP TABLE #temp_nome;
+
+-- Recriar com as colunas desejadas
+SELECT 
+    NOMEDE AS URE,
+    CODESC AS CODIGO_DA_ESCOLA,
+    NOMESC AS ESCOLA,
+    TPESC AS TIPO_DA_ESCOLA,
+    OBS AS OBSERVACAO,
+    MODAL AS MODALIDADE,
+    CATESC AS CATEGORIA
+INTO #temp_nome
+FROM nome_do_banco;
 
 -- Criação de e-mails
 
