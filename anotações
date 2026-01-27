@@ -8,8 +8,7 @@ Script	                 Conjunto de queries em uma janela/arquivo	        Arquiv
 Janela de Query	         Onde você digita scripts/queries	                  Área branca do SSMS
 Executar	               Processar o script/query	                          Botão F5
 
-CEPEA_SAS É o arquivo principal de um banco de dados SQL Server que contém todos os dados e é dp tipo .mdf
-.mdf Master Data File (Arquivo Mestre de Dados)
+CEPEA_SAS é o nome do banco de dados. Seus dados ficam guardados no arquivo CEPEA_SAS.mdf no servidor. (.mdf = Master Data File)
 
 ***************************    CONCEITOS *********************************
 
