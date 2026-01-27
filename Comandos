@@ -11,6 +11,9 @@ USE nome_do_banco;
 -- Informações completas
 EXEC sp_helpdb 'nome_do_banco';
 
+-- pesquisa Top 10 linhas
+SELECT TOP 10 * FROM ESCOLAS1225
+
 Bancos de Dados
 sql
 -- Criar banco de dados
