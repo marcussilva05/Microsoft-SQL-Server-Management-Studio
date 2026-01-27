@@ -10,6 +10,10 @@ Executar	               Processar o script/query	                          Botã
 
 CEPEA_SAS é o nome do banco de dados. Seus dados ficam guardados no arquivo CEPEA_SAS.mdf no servidor. (.mdf = Master Data File)
 
+dbo = Database Owner (Dono do Banco)
+
+É o SCHEMA PADRÃO (esquema) onde ficam os objetos principais do banco de dados (ex:. Colunas, Chaves, Restrições, Gatilhos, Índices, Estatísticas...)
+
 ***************************    CONCEITOS *********************************
 
 ***************************    PRINCIPAIS ATALHOS DE TECLADO DO SSMS *********************************
