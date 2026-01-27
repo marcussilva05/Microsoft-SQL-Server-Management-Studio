@@ -43,7 +43,7 @@ SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as col
               AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
 
 -- Especifica a tabela de origem com esquema dbo
-FROM dbo.nome_do_banco
+FROM dbo.nome_do_esquema
 
 -- Filtra os registros onde a coluna UA é igual a 40363
 WHERE UA=40363
