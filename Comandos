@@ -32,11 +32,20 @@ WHERE NOMEDE IN (
 );
 
 -- Criação de e-mails
-SELECT TOP 10 *, 
-			  CASE WHEN CATESC='VINCULADA' THEN CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') 
-				   ELSE CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')  			  
-			  END AS EMAIL 
-FROM dbo.ESCOLAS1225
+
+SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as colunas (*)            
+              CASE  -- Inicia um CASE para lógica condicional                  
+                  WHEN CATESC='VINCULADA' THEN -- Condição: quando a coluna CATESC for igual a 'VINCULADA' então
+                      CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') -- Se acima for verdadeiro: cria um email concatenando String 'e' com o número de ESCVINC em 6 dígitos (preenche com zeros à esquerda se ESCVINC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'                
+                  ELSE -- Se falso:
+                      CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')   -- cria um email concatenando String 'e' com o número de CODESC em 6 dígitos (preenche com zeros à esquerda se CODESC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'      
+              END               
+              AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
+
+-- Especifica a tabela de origem com esquema dbo
+FROM dbo.nome_do_banco
+
+-- Filtra os registros onde a coluna UA é igual a 40363
 WHERE UA=40363
 
 
