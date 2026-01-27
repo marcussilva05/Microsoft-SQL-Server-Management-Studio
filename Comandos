@@ -21,7 +21,7 @@ SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
 CREATE TEMPORARY TABLE temp_escolas AS
 SELECT * nome_do_banco;
 
--- Criar a tabela temporária com valores específicos da coluna
+-- Criar a tabela temporária com valores específicos da coluna de interesse
 CREATE TEMPORARY TABLE temp_escolas AS
 SELECT * nome_do_banco;
 WHERE nome_da_coluna (
