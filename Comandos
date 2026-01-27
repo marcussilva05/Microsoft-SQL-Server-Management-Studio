@@ -12,7 +12,27 @@ USE nome_do_banco;
 EXEC sp_helpdb 'nome_do_banco';
 
 -- pesquisa Top 10 linhas
-SELECT TOP 10 * FROM ESCOLAS1225
+SELECT TOP 10 * FROM nome_do_banco
+
+--pesquisar todos os elementos da coluna
+SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
+
+-- Criar a tabela temporária 
+CREATE TEMPORARY TABLE temp_escolas AS
+SELECT * nome_do_banco;
+
+-- Criar a tabela temporária com valores específicos da coluna
+CREATE TEMPORARY TABLE temp_escolas AS
+SELECT * nome_do_banco;
+WHERE nome_da_coluna (
+    'dado_pesquisado_01', 
+    'dado_pesquisado_02', 
+    'dado_pesquisado_03' 
+);
+
+
+
+
 
 Bancos de Dados
 sql
