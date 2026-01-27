@@ -18,20 +18,26 @@ SELECT TOP 10 * FROM nome_do_banco
 SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
 
 -- Criar a tabela temporária 
-CREATE TEMPORARY TABLE temp_escolas AS
-SELECT * nome_do_banco;
+CREATE TABLE #temp_URE AS
+SELECT * FROM  nome_do_banco;
 
 -- Criar a tabela temporária com valores específicos da coluna de interesse
-CREATE TEMPORARY TABLE temp_escolas AS
-SELECT * nome_do_banco;
-WHERE nome_da_coluna (
+CREATE TABLE #temp_URE AS
+SELECT * 
+FROM ESCOLAS1225 
+WHERE NOMEDE IN (
     'dado_pesquisado_01', 
     'dado_pesquisado_02', 
     'dado_pesquisado_03' 
 );
 
-
-
+-- Criação de e-mails
+SELECT TOP 10 *, 
+			  CASE WHEN CATESC='VINCULADA' THEN CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') 
+				   ELSE CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')  			  
+			  END AS EMAIL 
+FROM dbo.ESCOLAS1225
+WHERE UA=40363
 
 
 Bancos de Dados
