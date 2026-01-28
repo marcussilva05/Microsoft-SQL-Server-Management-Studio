@@ -1,4 +1,4 @@
-*************************** COMANDOS *********************************
+*************************** INÍCIO COMANDOS SIMPLES *********************************
 -- Qual bd estou?              
 SELECT DB_NAME();
 
@@ -17,24 +17,38 @@ SELECT TOP 10 * FROM nome_do_banco
 --pesquisar todos os elementos da coluna
 SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
 
--- Criar a tabela temporária 
+-- Limpar a tabela criada
+DROP TABLE #temp_nome;
+
+*************************** FIM COMANDOS SIMPLES *********************************
+
+*************************** INÍCIO COMANDOS ELABORADOS *********************************
+-- Criação de e-mails
+SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as colunas (*)            
+              CASE  -- Inicia um CASE para lógica condicional                  
+                  WHEN CATESC='VINCULADA' THEN -- Condição: quando a coluna CATESC for igual a 'VINCULADA' então
+                      CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') -- Se acima for verdadeiro: cria um email concatenando String 'e' com o número de ESCVINC em 6 dígitos (preenche com zeros à esquerda se ESCVINC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'                
+                  ELSE -- Se falso:
+                      CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')   -- cria um email concatenando String 'e' com o número de CODESC em 6 dígitos (preenche com zeros à esquerda se CODESC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'      
+              END               
+              AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
+FROM dbo.nome_do_esquema -- Especifica a tabela de origem com esquema dbo
+
+-- Criar temporária 
 CREATE TABLE #temp_nome AS
 SELECT * FROM  nome_do_banco;
 
--- Criar a tabela temporária com valores específicos da coluna de interesse
-CREATE TABLE #temp_URE AS
+-- Criar temporária com valores específicos da coluna de interesse
+CREATE TABLE #temp_nome AS
 SELECT * 
-FROM ESCOLAS1225 
-WHERE NOMEDE IN (
+FROM nome_do_banco 
+WHERE NOME_DA_COLUNA IN (
     'dado_pesquisado_01', 
     'dado_pesquisado_02', 
     'dado_pesquisado_03' 
 );
 
--- Limpar a tabela criada
-DROP TABLE #temp_nome;
-
--- Recriar com as colunas desejadas
+-- Criar temporária com as colunas desejadas
 SELECT 
     NOMEDE AS URE,
     CODESC AS CODIGO_DA_ESCOLA,
@@ -46,381 +60,18 @@ SELECT
 INTO #temp_nome
 FROM nome_do_banco;
 
--- Criação de e-mails
-
-SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as colunas (*)            
-              CASE  -- Inicia um CASE para lógica condicional                  
-                  WHEN CATESC='VINCULADA' THEN -- Condição: quando a coluna CATESC for igual a 'VINCULADA' então
-                      CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') -- Se acima for verdadeiro: cria um email concatenando String 'e' com o número de ESCVINC em 6 dígitos (preenche com zeros à esquerda se ESCVINC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'                
-                  ELSE -- Se falso:
-                      CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')   -- cria um email concatenando String 'e' com o número de CODESC em 6 dígitos (preenche com zeros à esquerda se CODESC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'      
-              END               
-              AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
-
--- Especifica a tabela de origem com esquema dbo
-FROM dbo.nome_do_esquema
-
--- Filtra os registros onde a coluna UA é igual a 40363
-WHERE UA=40363
-
-
-Bancos de Dados
-sql
--- Criar banco de dados
-CREATE DATABASE NomeBanco;
-
--- Alterar banco
-ALTER DATABASE NomeBanco 
-MODIFY NAME = NovoNome;
-
--- Excluir banco
-DROP DATABASE NomeBanco;
-
--- Backup
-BACKUP DATABASE NomeBanco 
-TO DISK = 'C:\backup.bak';
-
--- Restaurar
-RESTORE DATABASE NomeBanco 
-FROM DISK = 'C:\backup.bak';
-Tabelas
-sql
--- Criar tabela
-CREATE TABLE Clientes (
-    ID INT PRIMARY KEY IDENTITY(1,1),
-    Nome VARCHAR(100) NOT NULL,
-    Email VARCHAR(100) UNIQUE,
-    DataNasc DATE,
-    Salario DECIMAL(10,2)
-);
-
--- Adicionar coluna
-ALTER TABLE Clientes 
-ADD Telefone VARCHAR(20);
-
--- Modificar coluna
-ALTER TABLE Clientes 
-ALTER COLUMN Nome VARCHAR(150);
-
--- Excluir coluna
-ALTER TABLE Clientes 
-DROP COLUMN Telefone;
-
--- Excluir tabela
-DROP TABLE Clientes;
-
--- Criar índice
-CREATE INDEX IX_Clientes_Nome 
-ON Clientes(Nome);
-
--- Criar view
-CREATE VIEW vw_ClientesAtivos AS
-SELECT * FROM Clientes 
-WHERE Ativo = 1;
-📊 COMANDOS DE MANIPULAÇÃO (DML)
-CRUD Básico
-sql
--- Inserir dados
-INSERT INTO Clientes (Nome, Email) 
-VALUES ('João Silva', 'joao@email.com');
-
--- Inserir múltiplos
-INSERT INTO Clientes (Nome, Email)
-VALUES 
-    ('Maria Santos', 'maria@email.com'),
-    ('Pedro Costa', 'pedro@email.com');
-
--- Consultar dados
-SELECT * FROM Clientes;
-SELECT Nome, Email FROM Clientes;
-SELECT TOP 10 * FROM Clientes;
-
--- Com condições
-SELECT * FROM Clientes 
-WHERE Cidade = 'São Paulo' 
-AND Salario > 3000;
-
--- Com ordenação
-SELECT * FROM Clientes 
-ORDER BY Nome ASC, DataCadastro DESC;
-
--- Atualizar dados
-UPDATE Clientes 
-SET Salario = Salario * 1.10 
-WHERE Departamento = 'TI';
-
--- Excluir dados
-DELETE FROM Clientes 
-WHERE DataCadastro < '2020-01-01';
-🔍 COMANDOS DE CONSULTA AVANÇADOS
-Junções (JOINs)
-sql
--- INNER JOIN
-SELECT c.Nome, p.Produto, p.Valor
-FROM Clientes c
-INNER JOIN Pedidos p ON c.ID = p.ClienteID;
-
--- LEFT JOIN
-SELECT d.Nome, COUNT(f.ID) AS QtdeFuncionarios
-FROM Departamentos d
-LEFT JOIN Funcionarios f ON d.ID = f.DepartamentoID
-GROUP BY d.Nome;
-
--- RIGHT JOIN e FULL JOIN também disponíveis
-Agregações
-sql
--- Funções agregadas
-SELECT 
-    COUNT(*) AS Total,
-    AVG(Salario) AS MediaSalarial,
-    SUM(Salario) AS FolhaTotal,
-    MIN(Salario) AS MenorSalario,
-    MAX(Salario) AS MaiorSalario
-FROM Funcionarios;
-
--- GROUP BY
-SELECT 
-    Departamento,
-    COUNT(*) AS QtdeFuncionarios,
-    AVG(Salario) AS MediaSalarial
-FROM Funcionarios
-GROUP BY Departamento
-HAVING AVG(Salario) > 5000;  -- Filtro pós-agregação
-Subconsultas
-sql
--- Subconsulta escalar
-SELECT Nome, Salario,
-    (SELECT AVG(Salario) FROM Funcionarios) AS MediaGeral
-FROM Funcionarios;
-
--- Subconsulta na cláusula WHERE
-SELECT * FROM Produtos
-WHERE Preco > (SELECT AVG(Preco) FROM Produtos);
-
--- EXISTS
-SELECT * FROM Clientes c
-WHERE EXISTS (
-    SELECT 1 FROM Pedidos p 
-    WHERE p.ClienteID = c.ID
-);
-⚙️ COMANDOS DE ADMINISTRAÇÃO
-Sessões e Processos
-sql
--- Ver processos ativos
-EXEC sp_who;
-EXEC sp_who2;
-
--- Ver conexões
-SELECT * FROM sys.dm_exec_sessions;
-
--- Matar processo
-KILL 53;  -- SPID do processo
-
--- Ver queries em execução
-SELECT * FROM sys.dm_exec_requests;
-Permissões
-sql
--- Conceder permissões
-GRANT SELECT, INSERT ON Clientes TO Usuario;
-GRANT EXECUTE ON sp_Procedure TO RoleDB;
-
--- Revogar permissões
-REVOKE DELETE ON Clientes FROM Usuario;
-
--- Negar permissão
-DENY ALTER ON DATABASE::MeuBanco TO Usuario;
-
--- Criar login e usuário
-CREATE LOGIN novoLogin WITH PASSWORD = 'senhaForte123';
-CREATE USER novoUsuario FOR LOGIN novoLogin;
-Monitoramento
-sql
--- Espaço em disco
-EXEC sp_spaceused 'Clientes';  -- Tabela específica
-EXEC sp_spaceused;             -- Banco atual
-
--- Estatísticas de índice
-DBCC SHOW_STATISTICS ('Clientes', 'IX_Nome');
-
--- Integridade do banco
-DBCC CHECKDB ('NomeBanco');
-
--- Limpar cache
-DBCC FREEPROCCACHE;   -- Cache de planos
-DBCC DROPCLEANBUFFERS; -- Cache de buffers
-📈 COMANDOS DE OTIMIZAÇÃO
-Plano de Execução
-sql
--- Habilitar estatísticas
-SET STATISTICS IO ON;
-SET STATISTICS TIME ON;
-
--- Ver plano de execução real
--- (Ativar com Ctrl+M ou no menu Query -> Include Actual Execution Plan)
-
--- Forçar índice
-SELECT * FROM Clientes WITH (INDEX(IX_Nome))
-WHERE Nome LIKE 'A%';
-
--- Atualizar estatísticas
-UPDATE STATISTICS Clientes;
-🔧 COMANDOS DO SISTEMA
-Informações do Sistema
-sql
--- Versão do SQL Server
-SELECT @@VERSION;
-
--- Nome do servidor
-SELECT @@SERVERNAME;
-
--- ID da sessão
-SELECT @@SPID;
-
--- Data/hora
-SELECT GETDATE();
-SELECT SYSDATETIME();
-
--- Usuário atual
-SELECT SUSER_NAME();
-SELECT CURRENT_USER;
-Variáveis de Configuração
-sql
--- Ver configurações
-EXEC sp_configure;
-
--- Habilitar opções avançadas
-EXEC sp_configure 'show advanced options', 1;
-RECONFIGURE;
-
--- Alterar configuração
-EXEC sp_configure 'max server memory', 8192;
-RECONFIGURE;
-📁 COMANDOS DE ARQUIVOS E BACKUP
-Manipulação de Arquivos
-sql
--- Ver arquivos do banco
-SELECT name, physical_name, size/128.0 AS SizeMB
-FROM sys.database_files;
-
--- Adicionar arquivo de dados
-ALTER DATABASE MeuBanco
-ADD FILE (
-    NAME = MeuBanco_Dados2,
-    FILENAME = 'C:\Data\MeuBanco_Dados2.ndf',
-    SIZE = 100MB,
-    MAXSIZE = UNLIMITED,
-    FILEGROWTH = 10%
-);
-
--- Reduzir arquivo
-DBCC SHRINKFILE (N'MeuBanco_Log', 100);  -- Reduzir para 100MB
-🔄 COMANDOS DE TRANSAÇÃO
-sql
--- Iniciar transação
-BEGIN TRANSACTION;
-
--- Confirmar transação
-COMMIT TRANSACTION;
-
--- Desfazer transação
-ROLLBACK TRANSACTION;
-
--- Ponto de salvamento
-SAVE TRANSACTION PontoSalvamento;
-ROLLBACK TRANSACTION PontoSalvamento;
-
--- Nível de isolamento
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
-📋 COMANDOS DE METADADOS
-sql
--- Listar tabelas
-SELECT * FROM INFORMATION_SCHEMA.TABLES;
-
--- Listar colunas
-SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
-WHERE TABLE_NAME = 'Clientes';
-
--- Listar procedures
-SELECT * FROM sys.procedures;
-
--- Listar views
-SELECT * FROM sys.views;
-
--- Listar índices
-EXEC sp_helpindex 'Clientes';
-
--- Dependências
-EXEC sp_depends 'NomeTabela';
-🎯 COMANDOS DE DIAGNÓSTICO
-sql
--- Ver último erro
-SELECT @@ERROR;
-
--- Ver linha afetada
-SELECT @@ROWCOUNT;
-
--- Ver identidade atual
-SELECT @@IDENTITY;
-SELECT SCOPE_IDENTITY();
-
--- Ver tempo de compilação
-SELECT cpu_time, total_elapsed_time
-FROM sys.dm_exec_requests
-WHERE session_id = @@SPID;
-💡 DICAS DE ATALHOS DO SSMS
-Teclas de Atalho:
-F5 ou Ctrl+E - Executar query
-
-Ctrl+R - Mostrar/ocultar painel de resultados
-
-Ctrl+N - Nova janela de query
-
-Ctrl+T - Resultados em texto
-
-Ctrl+D - Resultados em grade
-
-Ctrl+Shift+R - Atualizar cache do IntelliSense
-
-Ctrl+K, Ctrl+C - Comentar linhas
-
-Ctrl+K, Ctrl+U - Descomentar linhas
-
-Comandos Práticos Diários:
-sql
--- Verificar espaço das tabelas
-EXEC sp_MSforeachtable 'EXEC sp_spaceused [?]';
-
--- Gerar script de criação de tabela
-SELECT 'CREATE TABLE ' + TABLE_NAME + ' (' +
-STRING_AGG(COLUMN_NAME + ' ' + DATA_TYPE + 
-CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL 
-THEN '(' + CAST(CHARACTER_MAXIMUM_LENGTH AS VARCHAR) + ')' 
-ELSE '' END, ', ') WITHIN GROUP (ORDER BY ORDINAL_POSITION)
-+ ');'
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME = 'Clientes'
-GROUP BY TABLE_NAME;
-
--- Backup de todas as tabelas para outra base
-SELECT 'SELECT * INTO BackupDB.dbo.' + name + 
-' FROM ' + name + ';'
-FROM sys.tables;
-⚠️ COMANDOS PERIGOSOS (USE COM CAUTELA)
-sql
--- Desabilitar constraints
-ALTER TABLE Clientes NOCHECK CONSTRAINT ALL;
-
--- Habilitar constraints
-ALTER TABLE Clientes CHECK CONSTRAINT ALL;
-
--- Truncar tabela (não pode ser desfeito!)
-TRUNCATE TABLE Clientes;
-
--- Reconstruir índice online
-ALTER INDEX ALL ON Clientes REBUILD WITH (ONLINE = ON);
-
--- Forçar failover (em AlwaysOn)
-ALTER AVAILABILITY GROUP MeuAG FAILOVER;
-
-*************************** COMANDOS *********************************
+-- Filtra os registros onde a coluna NOME_DA_COLUNA é igual a dado_pesquisado_01
+USE nome_do_banco;
+WHERE NOME_DA_COLUNA = dado_pesquisado_01
+
+-- pesquisar se a coluna (por exemplo a terceira) tem trechos dos dados de interesse
+SELECT NOME_DA_COLUNA01, NOME_DA_COLUNA02,  NOME_DA_COLUNA03, NOME_DA_COLUNA04
+FROM nome_do_banco
+WHERE NOME_DA_COLUNA03 LIKE '%dado_pesquisado_01%'
+   OR NOME_DA_COLUNA03 LIKE '%dado_pesquisado_02%'
+   OR NOME_DA_COLUNA03 LIKE '%dado_pesquisado_03%'
+   OR NOME_DA_COLUNA03 LIKE '%dado_pesquisado_04%'
+ORDER BY NOME_DA_COLUNA01;    
+
+
+*************************** FIM COMANDOS ELABORADOS *********************************
