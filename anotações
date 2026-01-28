@@ -20,6 +20,7 @@ Atalho	Ação
 Ctrl + N	Nova janela de query
 Ctrl + O	Abrir arquivo .sql
 Ctrl + S	Salvar query atual
+Ctrl + R	MInimizar Terminal
 Ctrl + Shift + S	Salvar todas as queries
 Ctrl + F4	Fechar janela atual
 Ctrl + Tab	Alternar entre janelas abertas
