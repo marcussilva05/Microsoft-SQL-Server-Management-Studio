@@ -20,6 +20,22 @@ SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
 -- Limpar a tabela criada
 DROP TABLE #temp_nome;
 
+-- ORDENAR COLUNA
+SELECT coluna1, coluna2, ...
+FROM tabela
+ORDER BY coluna1 [ASC|DESC], coluna2 [ASC|DESC], ...; -- se não tiver nada, ASC é o padrão
+
+-- Ordenação por múltiplas colunas
+SELECT CD_URE, NOME_URE, CODESC, NOMESC, TIPO_ESCOLA
+FROM #ESCOLAS
+ORDER BY NOME_URE ASC, TIPO_ESCOLA DESC, NOMESC ASC;
+
+ -- Agrupamento de dados
+SELECT coluna1, coluna2, função_agregação(coluna3)
+FROM tabela
+GROUP BY coluna1, coluna2;
+
+
 *************************** FIM COMANDOS SIMPLES *********************************
 
 *************************** INÍCIO COMANDOS ELABORADOS *********************************
