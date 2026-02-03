@@ -11,29 +11,131 @@ USE nome_do_banco;
 -- Informações completas
 EXEC sp_helpdb 'nome_do_banco';
 
--- pesquisa Top 10 linhas
-SELECT TOP 10 * FROM nome_do_banco
+-- Top 10 linhas
+SELECT TOP 10 * FROM nome_da_tabela
 
---pesquisar todos os elementos da coluna
-SELECT DISTINCT nome_da_coluna FROM nome_do_banco ORDER BY nome_da_coluna;
+-- Seleção Distinta remove duplicatas dos resultados
+-- Lista todas as UREs únicas
+SELECT DISTINCT NOME_URE
+FROM #ESCOLAS
+ORDER BY NOME_URE;
 
 -- Limpar a tabela criada
 DROP TABLE #temp_nome;
 
+-- Limpar tabela recriá-la em looping
+DROP TABLE IF EXISTS #temp_01
+SELECT * INTO #temp_01 FROM nome_da_tabela
+
 -- ORDENAR COLUNA
 SELECT coluna1, coluna2, ...
-FROM tabela
+FROM nome_da_tabela
 ORDER BY coluna1 [ASC|DESC], coluna2 [ASC|DESC], ...; -- se não tiver nada, ASC é o padrão
 
 -- Ordenação por múltiplas colunas
-SELECT CD_URE, NOME_URE, CODESC, NOMESC, TIPO_ESCOLA
-FROM #ESCOLAS
-ORDER BY NOME_URE ASC, TIPO_ESCOLA DESC, NOMESC ASC;
+SELECT coluna1, coluna2, coluna3, ...
+FROM nome_da_tabela
+ORDER BY coluna1 ASC, coluna2 DESC, coluna3 ASC, ...;  -- se não tiver nada, ASC é o padrão
 
  -- Agrupamento de dados
 SELECT coluna1, coluna2, função_agregação(coluna3)
-FROM tabela
+FROM nome_da_tabela
 GROUP BY coluna1, coluna2;
+    -- exemplo de agrupamento
+SELECT 
+    CD_URE,
+    NOME_URE,
+    COUNT(*) AS TOTAL_ESCOLAS
+FROM #ESCOLAS
+GROUP BY CD_URE, NOME_URE
+ORDER BY TOTAL_ESCOLAS DESC;
+
+-- Filtro WHERE
+SELECT 
+    CD_URE,
+    NOME_URE,
+    CODESC,
+    NOMESC,
+    TIPO_ESCOLA,
+    MODALIDADE
+FROM #ESCOLAS
+-- WHERE sempre vem depois do FROM e antes do GROUP BY/ORDER BY
+WHERE 
+    NOME_URE = 'NORTE 1'  -- Filtra apenas escolas da URE NORTE 1
+    AND TIPO_ESCOLA = 8   -- E apenas do tipo 8
+    AND CODESC > 100      -- E com código maior que 100
+ORDER BY CODESC;
+
+-- Exemplo 2: WHERE com múltiplas condições e operadores
+SELECT *
+FROM #ESCOLAS
+WHERE 
+    -- Usando OR para múltiplas UREs
+    (NOME_URE = 'NORTE 1' OR NOME_URE = 'SUL 1')
+    -- Usando BETWEEN para intervalo
+    AND CODESC BETWEEN 100 AND 500
+    -- Usando LIKE para padrão de texto
+    AND NOMESC LIKE '%PROFESSOR%'  -- Escolas que contém "PROFESSOR" no nome
+    -- Usando IN para lista de valores
+    AND TIPO_ESCOLA IN (8, 9, 10)
+    -- Usando NOT para exclusão
+    AND CATEGORIA NOT IN ('VINCULADA', 'EXTINTA');
+
+-- filtro em grupos HAVING 
+SELECT 
+    NOME_URE,
+    TIPO_ESCOLA,
+    COUNT(*) AS TOTAL
+FROM #ESCOLAS
+GROUP BY NOME_URE, TIPO_ESCOLA
+HAVING COUNT(*) > 5  -- Filtra apenas grupos com mais de 5 escolas
+ORDER BY TOTAL DESC;
+
+-- ISNULL
+ISNULL(FORMAT(A.DTPOSSE_C,'dd/MM/yyyy'),'') AS DTPOSSE,
+
+-- CONCAT: concatena strings 
+SELECT 
+    CODESC,
+    NOMESC,
+    -- CONCAT automaticamente trata NULLs como strings vazias
+    CONCAT('Código: ', CODESC, ' - ', NOMESC) AS DESCRICAO_COMPLETA,
+    -- Exemplo com dados reais
+    CONCAT(
+        'Escola: ', NOMESC, 
+        ' | URE: ', NOME_URE,
+        ' | Tipo: ', TIPO_ESCOLA
+    ) AS INFO_ESCOLA
+FROM #ESCOLAS;
+
+-- LEFT Extrai caracteres do início da string
+SELECT 
+    -- Exemplo: pegar apenas os primeiros 12 caracteres do RG
+    LEFT(NR_RG, 12) AS RG_TRUNCADO,
+    -- Exemplo prático com nomes: primeiras 3 letras da URE
+    LEFT(NOME_URE, 3) AS SIGLA_URE,
+    -- Exemplo: código reduzido (primeiros 3 dígitos)
+    LEFT(CODESC, 3) AS PREFIXO_CODIGO,
+    -- Combine com outras funções
+    CONCAT(
+        LEFT(NOME_URE, 3),  -- Primeiras 3 letras da URE
+        '-',
+        LEFT(NOMESC, 10)    -- Primeiras 10 letras da escola
+    ) AS CODIGO_REDUZIDO
+FROM #ESCOLAS A;
+
+-- CASE: if/else do SQL
+SELECT 
+    CODESC,
+    NOMESC,
+    TIPO_ESCOLA,
+    -- Sintaxe básica do CASE
+    CASE TIPO_ESCOLA
+        WHEN 8 THEN 'ENSINO REGULAR'
+        WHEN 9 THEN 'ENSINO INTEGRAL'
+        WHEN 10 THEN 'EDUCAÇÃO ESPECIAL'
+        ELSE 'OUTROS TIPOS'
+    END AS DESCRICAO_TIPO,
 
 
 *************************** FIM COMANDOS SIMPLES *********************************
