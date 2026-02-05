@@ -81,7 +81,7 @@ WHERE NOME_DA_COLUNA IN (
     'dado_pesquisado_03' 
 );
 
--- Filtra os registros onde a coluna NOME_DA_COLUNA é igual a dado_pesquisado_01
+-- pesquisar os registros onde a coluna NOME_DA_COLUNA é igual a dado_pesquisado_01
 USE nome_do_banco;
 WHERE NOME_DA_COLUNA = dado_pesquisado_01
 
@@ -92,7 +92,13 @@ WHERE NOME_DA_COLUNA03 LIKE '%dado_pesquisado_01%'
    OR NOME_DA_COLUNA03 LIKE '%dado_pesquisado_02%'
    OR NOME_DA_COLUNA03 LIKE '%dado_pesquisado_03%'
    OR NOME_DA_COLUNA03 LIKE '%dado_pesquisado_04%'
-ORDER BY NOME_DA_COLUNA01;    
+ORDER BY NOME_DA_COLUNA01;  
+
+-- pesquisar trecho de nome
+SELECT 
+    NOME_DA_COLUNA01, NOME_DA_COLUNA02,  NOME_DA_COLUNA03, NOME_DA_COLUNA04
+FROM nome_do_banco
+WHERE NOME_DA_COLUNA01 LIKE '%FULANO_DE_T%'
 
 -- Listar todas as tabelas do nome_banco
 SELECT TABLE_SCHEMA, TABLE_NAME 
