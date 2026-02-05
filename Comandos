@@ -135,17 +135,18 @@ WHERE TABLE_NAME = 'TB_ESCOLA'
 ORDER BY TABLE_SCHEMA;
 
  -- Agrupamento de dados
-SELECT coluna1, coluna2, função_agregação(coluna3)
-FROM nome_da_tabela
-GROUP BY coluna1, coluna2;
-    -- exemplo de agrupamento
-SELECT 
-    CD_URE,
-    NOME_URE,
+SELECT
+    NM_CARGO,
+    CD_CARGO,
+    CD_QUADRO,
+    CD_CLASSE,
+    CD_CARGO_NOVO,  
     COUNT(*) AS TOTAL_ESCOLAS
-FROM #ESCOLAS
-GROUP BY CD_URE, NOME_URE
-ORDER BY TOTAL_ESCOLAS DESC;
+FROM [012020].[TB_CARGOS]
+WHERE 
+    CD_QUADRO IN ('1', '2', '3', '4')  -- Simplificado com IN
+GROUP BY CD_CARGO, NM_CARGO, CD_QUADRO, CD_CLASSE, CD_CARGO_NOVO
+ORDER BY TOTAL_ESCOLAS;  -- DESC para ver do maior para o menor
 
 -- Filtro WHERE
 SELECT 
