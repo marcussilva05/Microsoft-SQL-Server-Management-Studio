@@ -45,6 +45,13 @@ SELECT coluna1, coluna2, coluna3, ...
 FROM nome_da_tabela
 ORDER BY coluna1 ASC, coluna2 DESC, coluna3 ASC, ...;  -- se não tiver nada, ASC é o padrão
 
+-- Contar colunas
+USE nome_do_banco;
+SELECT COUNT(*) AS NUMERO_COLUNAS
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'nome_da_tabela_após_dbo'
+  AND TABLE_SCHEMA = 'DBO';
+
 -- ISNULL
 ISNULL(FORMAT(A.DTPOSSE_C,'dd/MM/yyyy'),'') AS DTPOSSE,
 
