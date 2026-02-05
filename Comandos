@@ -48,9 +48,13 @@ ORDER BY coluna1 ASC, coluna2 DESC, coluna3 ASC, ...;  -- se não tiver nada, AS
 -- ISNULL
 ISNULL(FORMAT(A.DTPOSSE_C,'dd/MM/yyyy'),'') AS DTPOSSE,
 
--- Criar temporária 
-CREATE TABLE #temp_nome AS
-SELECT * FROM  nome_do_banco;
+-- Criar temporária com as colunas desejadas
+SELECT 
+    NOME DA COLUNA01 AS NOVO NOME01,
+    NOME DA COLUNA02 AS NOVO NOME02,
+    NOME DA COLUNA03 AS NOVO NOME03
+INTO #temp_nome
+FROM nome_do_banco;
 
 
 *************************** FIM COMANDOS *********************************
@@ -76,14 +80,6 @@ WHERE NOME_DA_COLUNA IN (
     'dado_pesquisado_02', 
     'dado_pesquisado_03' 
 );
-
--- Criar temporária com as colunas desejadas
-SELECT 
-    NOME DA COLUNA01 AS NOVO NOME01,
-    NOME DA COLUNA02 AS NOVO NOME02,
-    NOME DA COLUNA03 AS NOVO NOME03
-INTO #temp_nome
-FROM nome_do_banco;
 
 -- Filtra os registros onde a coluna NOME_DA_COLUNA é igual a dado_pesquisado_01
 USE nome_do_banco;
