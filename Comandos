@@ -61,7 +61,7 @@ WHERE TABLE_NAME = 'nome_da_tabela_após_dbo'
   AND TABLE_SCHEMA = 'DBO';
 
 -- ISNULL
-ISNULL(FORMAT(A.DTPOSSE_C,'dd/MM/yyyy'),'') AS DTPOSSE,
+ISNULL(NOME_COLUNA,'') AS NOME_COLUNA
 
 -- Criar temporária com as colunas desejadas
 SELECT 
