@@ -257,6 +257,28 @@ ADD idade INT;
 ALTER TABLE #temp_01 
 DROP COLUMN coluna1, coluna2;
 
+-- ANTES: #temp_01
+╔════╦═══════╗
+║ id ║ nome  ║
+╠════╬═══════╣
+║ 1  ║ Ana   ║
+║ 2  ║ Bruno ║
+╚════╩═══════╝
+
+-- COMANDO (ERRADO - só ALTER TABLE)
+ALTER TABLE #temp_01;  -- ❌ ERRO! Não faz nada
+
+-- COMANDO (CORRETO)
+ALTER TABLE #temp_01 ADD idade INT;  -- ✅ Funciona!
+
+-- DEPOIS: #temp_01
+╔════╦═══════╦═══════╗
+║ id ║ nome  ║ idade ║
+╠════╬═══════╬═══════╣
+║ 1  ║ Ana   ║ NULL  ║
+║ 2  ║ Bruno ║ NULL  ║
+╚════╩═══════╩═══════╝
+
 --------- INSERIR VALORES DO SCRIPT NAS COLUNAS ---------
 INSERT INTO #temp_01 (coluna1, coluna2) 
 VALUES ('valor1', 'valor2'); 
@@ -295,14 +317,22 @@ WHERE outra_tabela < '2020-01-01';
 
 --------- CRIAR UMA NOVA TEMP #temp_uniao FORMADA POR COLUNAS DE #temp_a COM ACRÉSCIMO DE DADOS DAS COLUNAS DE #temp_b ABAIXO ---------
 -- UNION (empilha)
-SELECT * INTO #temp_uniao
+SELECT * 
+INTO #temp_uniao
 FROM (
-    SELECT col1, col2 FROM #temp_a
+    SELECT 
+        col1, 
+        col2 
+    FROM #temp_a
     UNION ALL  -- ALL mantém duplicatas, UNION remove
-    SELECT col1, col2 FROM #temp_b
-) AS uniao;
+    SELECT 
+         col1, 
+         col2 
+    FROM #temp_b
+) AS uniao; --isso é apenas apelido da subconsulta
 
--- JOIN (horizontal)
+
+--------- TRÊS COLUNAS DE TRÊS TABELAS DIFERENTES A, B, C em  #temp_join ---------
 SELECT 
     a.*,
     b.coluna_extra,
@@ -312,7 +342,7 @@ FROM #temp_a a
 LEFT JOIN #temp_b b ON a.id = b.id
 INNER JOIN #temp_c c ON a.id = c.id;
 
---------- 9. MERGE (UPSERT = Insert + Update) ---------
+--------- MERGE: PUXA DADOS DE ORIGEM E MANTÉM DADOS SEMELHANTES AOS DO DESTINO, ACRESCENTANDO OS NOVOS ---------
 MERGE INTO #temp_destino AS destino
 USING #temp_origem AS origem
     ON destino.id = origem.id
