@@ -162,11 +162,12 @@ ORDER BY NEWID();  -- Ordem aleatória (SQL Server)
 ************************************ FIM DE ORDENAR ************************************
 
 ************************************ AGRUPAR ************************************
-___________________________________________________________________________________
-| IMPORTANTE!!!                                                                    |
-| GROUP BY tem que ter função de agregação em SELECT (COUNT, SUM, AVG, MAX, MIN)   |
-|__________________________________________________________________________________|
- -- Agrupamentos ()
+___________________________________________________________________________________________________
+| IMPORTANTE!!!                                                                                    |
+| GROUP BY tem que ter função de agregação em SELECT (COUNT, SUM, AVG, MAX, MIN)                   |
+| Toda coluna no SELECT que NÃO estiver dentro de COUNT/SUM/AVG/MAX/MIN precisa estar no GROUP BY! |
+|__________________________________________________________________________________________________|
+ -- Agrupamentos (Contagem, MÚLTIPLAS, HAVING)
 SELECT
     coluna1,
     COUNT(*) AS total,      -- Obrigatório ter ao menos uma das agregação!
@@ -177,48 +178,65 @@ SELECT
 FROM nome_do_banco
 GROUP BY coluna1; 
 
+-- Contagem de linhas dados da coluna
+SELECT 
+    coluna1,
+    COUNT(*) AS qtd
+FROM nome_do_banco
+GROUP BY coluna1;
+
+-- 2. MÚLTIPLAS AGREGAÇÕES
+SELECT 
+    coluna1,
+    coluna2,
+    COUNT(*) AS total,
+    AVG(nota_media) AS media,
+    MAX(data_fundacao) AS maximo
+FROM nome_do_banco
+GROUP BY coluna1, coluna2;
+
+-- 3. FILTRANDO GRUPOS (HAVING)
+SELECT 
+    categoria,
+    COUNT(*) AS total,
+    AVG(preco) AS preco
+FROM produtos
+GROUP BY categoria
+HAVING COUNT(*) > 10  -- Só categorias com +10 produtos
+    AND AVG(preco) > 50;  -- E preço médio > 50
+
 ************************************ FIM AGRUPAR ************************************
 
+************************************ TEMPORÁRIAS ************************************
 
-
--- Renomear colunas
-SELECT 
-    NOME DA COLUNA01 AS NOVO NOME01,
-    NOME DA COLUNA02 AS NOVO NOME02
-FROM nome_do_banco;
-
--- Ordenar colunas
-SELECT 
-    coluna1, 
-    coluna2
-FROM nome_da_tabela
-ORDER BY 
-    coluna1 [ASC|DESC],  
-    coluna2 [ASC|DESC]; 
-
--- Retirar NULL
-ISNULL(NOME_COLUNA,'') AS NOME_COLUNA;
-
--- Criar temporária com valores específicos da coluna de interesse
-CREATE TABLE #temp_nome AS
-SELECT * 
-FROM nome_do_banco 
-WHERE NOME_DA_COLUNA IN (
-    'dado_pesquisado_01', 
-    'dado_pesquisado_02', 
-    'dado_pesquisado_03' 
-);
-
--- Dropar tabela e recriá-la em looping
-DROP TABLE IF EXISTS #temp_01
+------------ Criar Temporária ------------
+DROP TABLE IF EXISTS #temp_01;
 SELECT 
     coluna1, 
     coluna2
 INTO #temp_01 
 FROM nome_da_tabela;
 
+------------ CRIAR ESTRUTURA SEM DADOS ------------
+DROP TABLE IF EXISTS #temp_vazia;
+SELECT TOP 0 * 
+INTO #temp_vazia 
+FROM tabela_original;  -- Cria cópia da estrutura, sem dados
 
-*************************** FIM COMANDOS *********************************
+************************************ FIM TEMPORÁRIAS ************************************
+
+************************************ EDITAR TEMPORÁRIAS ************************************
+
+-- Renomear colunas
+SELECT 
+    NOME DA COLUNA01 AS NOVO NOME01,
+    NOME DA COLUNA02 AS NOVO NOME02
+FROM #temp_01;
+
+-- Retirar NULL
+ISNULL(NOME_COLUNA,'') AS NOME_COLUNA;
+
+************************************ FIM EDITAR TEMPORÁRIAS ************************************
 
 *************************** INÍCIO COMANDOS ELABORADOS *********************************
 -- Criação de e-mails
