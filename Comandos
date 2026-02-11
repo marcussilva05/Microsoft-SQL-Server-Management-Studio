@@ -250,33 +250,33 @@ ADD idade INT;
 ALTER TABLE #temp_01 
 DROP COLUMN coluna1, coluna2;
 
---------- SUBSTITUIR VALORES NA PRIMEIRA LINHA DAS COLUNAS ---------
+--------- INSERIR VALORES DO SCRIPT NAS COLUNAS ---------
 INSERT INTO #temp_01 (coluna1, coluna2) 
 VALUES ('valor1', 'valor2'); 
 
---------- SUBSTITUIR VALORES NAS PRIMEIRAS LINHAS DAS COLUNAS ---------
+--------- INSERIR VALORES DO SCRIPT EM SEQUENCIA NAS COLUNAS ---------
 INSERT INTO #temp_01 (coluna1, coluna2) 
 VALUES 
     ('a', 1),
     ('b', 2),
     ('c', 3);
 
---------- SUBSTITUIR COLUNAS DE UMA outra_tabela EM CIMA DE OUTRA #temp_01 ---------
-INSERT INTO #temp_01 (coluna1, coluna2)
-SELECT campo1, campo2 
-FROM outra_tabela -- SE campo1, campo2 FOR MENOR QUE coluna1, coluna2 AS ÚLTIMAS LINHAS DAS ANTIGAS COLUNAS CONTINUARAM ABAIXO, SE MAIOR OU IGUAL OK
-
---------- SUBSTITUIÇÃO DE DADOS ESPECÍFICOS DA COLUNA ---------
+--------- INSERIR DADOS EM UMA COLUNA EM COMPARAÇÃO COM OUTRA COLUNA ---------
 -- Atualização simples
 UPDATE #temp_01 
 SET coluna1 = 'novo_valor'
 WHERE coluna2 = 'dado02'; -- todos os dados da coluna1 que estão paralelos ao dado02 da coluna2 serão modificados para novo_valor
 
---------- SUBSTITUIÇÃO DE DADOS ESPECÍFICOS DA COLUNA ---------
+--------- INSERIR COLUNAS DE UMA outra_tabela EM CIMA DAS COLUNAS DA TABELA #temp_01 ---------
+INSERT INTO #temp_01 (coluna1, coluna2)
+SELECT campo1, campo2 
+FROM outra_tabela 
+
+--------- INSERIR DADOS ESPECÍFICOS DE UMA COLUNA DE outra_tabela EM COMPARAÇÃO COM AS COLUNAS DA TABELA #temp_01 ---------
 UPDATE t
-SET t.coluna1 = o.valor_corrigido
+SET t.coluna1 = o.outra_tabela 
 FROM #temp_01 t
-INNER JOIN tabela_origem o ON t.id = o.id; -- dados da coluna id em ambas que forem iguais farão substituições em t.coluna1 com novos valores vindos da coluna o.valor_corrigido.
+INNER JOIN outra_tabela o ON t.id = o.id; -- dados da coluna id em ambas que forem iguais farão substituições em t.coluna1 com novos valores vindos da coluna o.valor_corrigido.
 
 -- Atualização em massa
 UPDATE #temp_01 
