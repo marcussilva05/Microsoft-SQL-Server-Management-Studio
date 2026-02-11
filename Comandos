@@ -221,20 +221,160 @@ FROM nome_da_tabela;
 DROP TABLE IF EXISTS #temp_vazia;
 SELECT TOP 0 * 
 INTO #temp_vazia 
-FROM tabela_original;  -- Cria cópia da estrutura, sem dados
+FROM nome_da_tabela;  -- Cria cópia da estrutura, sem dados
 
 ************************************ FIM TEMPORÁRIAS ************************************
 
 ************************************ EDITAR TEMPORÁRIAS ************************************
+DROP TABLE IF EXISTS #temp_01;
+SELECT
+------------ RETIRAR NULL ------------
+ISNULL(coluna1,'') AS novo_nome1,
+ISNULL(coluna2, 0) AS com_zero, 
 
--- Renomear colunas
+------------ INVERSO DO IS NULL ------------
+NULLIF(coluna, 0) AS transforma_zero_em_null 
+
+------------ RENOMEAR COLUNAS ------------ 
+    coluna1 AS novo_nome1,
+    coluna2 AS novo_nome2
+
+------------ RENOMEAR COLUNA EXISTENTE ------------
+EXEC tempdb..sp_rename '#temp_01.coluna1', 'novo_nome', 'COLUMN'; --funciona fora da estrutura do SELECT
+
+--------- ACRESCENTAR COLUNA VAZIA COM CABEÇALHO ---------
+ALTER TABLE #temp_01 
+ADD idade INT;
+
+--------- EXCLUIR COLUNAS ---------
+ALTER TABLE #temp_01 
+DROP COLUMN coluna1, coluna2;
+
+--------- SUBSTITUIR VALORES NA PRIMEIRA LINHA DAS COLUNAS ---------
+INSERT INTO #temp_01 (coluna1, coluna2) 
+VALUES ('valor1', 'valor2'); 
+
+--------- SUBSTITUIR VALORES NAS PRIMEIRAS LINHAS DAS COLUNAS ---------
+INSERT INTO #temp_01 (coluna1, coluna2) 
+VALUES 
+    ('a', 1),
+    ('b', 2),
+    ('c', 3);
+
+--------- SUBSTITUIR COLUNAS DE UMA outra_tabela EM CIMA DE OUTRA #temp_01 ---------
+INSERT INTO #temp_01 (coluna1, coluna2)
+SELECT campo1, campo2 
+FROM outra_tabela -- SE campo1, campo2 FOR MENOR QUE coluna1, coluna2 AS ÚLTIMAS LINHAS DAS ANTIGAS COLUNAS CONTINUARAM ABAIXO, SE MAIOR OU IGUAL OK
+
+--------- SUBSTITUIÇÃO DE DADOS ESPECÍFICOS DA COLUNA ---------
+-- Atualização simples
+UPDATE #temp_01 
+SET coluna1 = 'novo_valor'
+WHERE coluna2 = 'dado02'; -- todos os dados da coluna1 que estão paralelos ao dado02 da coluna2 serão modificados para novo_valor
+
+--------- SUBSTITUIÇÃO DE DADOS ESPECÍFICOS DA COLUNA ---------
+UPDATE t
+SET t.coluna1 = o.valor_corrigido
+FROM #temp_01 t
+INNER JOIN tabela_origem o ON t.id = o.id; -- dados da coluna id em ambas que forem iguais farão substituições em t.coluna1 com novos valores vindos da coluna o.valor_corrigido.
+
+-- Atualização em massa
+UPDATE #temp_01 
+SET 
+    status = 'INATIVO',
+    data_alteracao = GETDATE(),
+    usuario = 'SISTEMA'
+WHERE data_cadastro < '2020-01-01';
+
+--------- 7. EXCLUIR LINHAS ---------
+DELETE FROM #temp_01 
+WHERE coluna1 IS NULL;
+
+-- TRUNCATE (limpa TUDO, mais rápido)
+TRUNCATE TABLE #temp_01;
+
+--------- 8. JUNTAR DUAS TEMPORÁRIAS ---------
+-- UNION (empilha)
+SELECT * INTO #temp_uniao
+FROM (
+    SELECT col1, col2 FROM #temp_a
+    UNION ALL  -- ALL mantém duplicatas, UNION remove
+    SELECT col1, col2 FROM #temp_b
+) AS uniao;
+
+-- JOIN (horizontal)
 SELECT 
-    NOME DA COLUNA01 AS NOVO NOME01,
-    NOME DA COLUNA02 AS NOVO NOME02
+    a.*,
+    b.coluna_extra,
+    c.outra_coluna
+INTO #temp_join
+FROM #temp_a a
+LEFT JOIN #temp_b b ON a.id = b.id
+INNER JOIN #temp_c c ON a.id = c.id;
+
+--------- 9. MERGE (UPSERT = Insert + Update) ---------
+MERGE INTO #temp_destino AS destino
+USING #temp_origem AS origem
+    ON destino.id = origem.id
+WHEN MATCHED THEN
+    UPDATE SET 
+        destino.nome = origem.nome,
+        destino.valor = origem.valor
+WHEN NOT MATCHED THEN
+    INSERT (id, nome, valor)
+    VALUES (origem.id, origem.nome, origem.valor);
+
+--------- 10. ORDENAR DADOS NA TEMP ---------
+-- Temp não tem ordem, mas você pode criar uma coluna de ordem
+SELECT 
+    *,
+    ROW_NUMBER() OVER (ORDER BY data DESC) AS ordem_prioridade
+INTO #temp_ordenada
 FROM #temp_01;
 
--- Retirar NULL
-ISNULL(NOME_COLUNA,'') AS NOME_COLUNA;
+--------- 11. ADICIONAR CONSTRAINT (PK, FK, CHECK) ---------
+ALTER TABLE #temp_01
+ADD CONSTRAINT pk_temp PRIMARY KEY (id);  -- Chave primária
+
+ALTER TABLE #temp_01
+ADD CONSTRAINT ck_idade CHECK (idade >= 0);  -- Regra de validação
+
+--------- 12. CRIAR CÓPIA EXATA ---------
+-- Estrutura + dados
+SELECT * INTO #temp_copia FROM #temp_original;
+
+-- Só estrutura (sem dados)
+SELECT TOP 0 * INTO #temp_vazia FROM #temp_original;
+
+--------- 13. VER ESTRUTURA DA TEMP ---------
+-- No SSMS: sp_help
+EXEC tempdb..sp_help '#temp_01';
+
+-- Colunas e tipos
+SELECT 
+    c.name AS coluna,
+    t.name AS tipo,
+    c.max_length AS tamanho,
+    c.is_nullable AS permite_null
+FROM tempdb.sys.columns c
+JOIN tempdb.sys.types t ON c.user_type_id = t.user_type_id
+WHERE object_id = OBJECT_ID('tempdb..#temp_01');
+
+--------- 14. LIMPAR TEMPORÁRIAS ---------
+-- Remove uma específica
+DROP TABLE IF EXISTS #temp_01;
+
+-- Remove TODAS da sua sessão (cuidado!)
+DECLARE @sql VARCHAR(MAX) = '';
+SELECT @sql = @sql + 'DROP TABLE ' + name + ';'
+FROM tempdb.sys.tables 
+WHERE name LIKE '#%' AND name NOT LIKE '##%'
+AND object_id IN (
+    SELECT object_id FROM tempdb.sys.objects
+    WHERE session_id = @@SPID
+);
+EXEC(@sql);
+
 
 ************************************ FIM EDITAR TEMPORÁRIAS ************************************
 
