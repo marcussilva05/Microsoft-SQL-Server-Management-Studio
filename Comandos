@@ -186,7 +186,7 @@ WHERE
     -- Usando NOT para exclusão
     AND CATEGORIA NOT IN ('VINCULADA', 'EXTINTA');
 
--- filtro em grupos HAVING 
+-- filtro apenas quem tem certa quantidade  
 SELECT 
     NOME_URE,
     TIPO_ESCOLA,
@@ -195,20 +195,6 @@ FROM #ESCOLAS
 GROUP BY NOME_URE, TIPO_ESCOLA
 HAVING COUNT(*) > 5  -- Filtra apenas grupos com mais de 5 escolas
 ORDER BY TOTAL DESC;
-
--- CONCAT: concatena strings 
-SELECT 
-    CODESC,
-    NOMESC,
-    -- CONCAT automaticamente trata NULLs como strings vazias
-    CONCAT('Código: ', CODESC, ' - ', NOMESC) AS DESCRICAO_COMPLETA,
-    -- Exemplo com dados reais
-    CONCAT(
-        'Escola: ', NOMESC, 
-        ' | URE: ', NOME_URE,
-        ' | Tipo: ', TIPO_ESCOLA
-    ) AS INFO_ESCOLA
-FROM #ESCOLAS;
 
 -- LEFT Extrai caracteres do início da string
 SELECT 
@@ -225,97 +211,5 @@ SELECT
         LEFT(NOMESC, 10)    -- Primeiras 10 letras da escola
     ) AS CODIGO_REDUZIDO
 FROM #ESCOLAS A;
-
--- CASE: if/else do SQL
-SELECT 
-    CODESC,
-    NOMESC,
-    TIPO_ESCOLA,
-    -- Sintaxe básica do CASE
-    CASE TIPO_ESCOLA
-        WHEN 8 THEN 'ENSINO REGULAR'
-        WHEN 9 THEN 'ENSINO INTEGRAL'
-        WHEN 10 THEN 'EDUCAÇÃO ESPECIAL'
-        ELSE 'OUTROS TIPOS'
-    END AS DESCRICAO_TIPO,
-
--- LEFT JOIN: todos da tabela A + correspondentes de B
--- Supondo: CEPEA_SAS.dbo.CTG0126 tem dados de contratação
---        CEPEA_SAS.dbo.ESCOLAS0126 tem dados de escolas
-SELECT 
-    -- Dados da tabela A (CTG0126)
-    A.CD_CONTRATO,
-    A.NR_RG,
-    LEFT(A.NR_RG, 12) AS RG_FORMATADO,  -- Aplicando LEFT no RG
-    A.NM_SERVIDOR,
-    A.DT_ADMISSAO,
-    
-    -- Dados da tabela B (ESCOLAS0126)
-    B.CODESC,
-    B.NOMESC,
-    B.NOMEDE,
-    B.TPESC,
-    
-    -- Campos calculados
-    DATEDIFF(YEAR, A.DT_ADMISSAO, GETDATE()) AS TEMPO_SERVICO,
-    
-    -- CASE com dados das duas tabelas
-    CASE 
-        WHEN B.TPESC = 8 THEN 'LOTADO EM ESCOLA REGULAR'
-        WHEN B.TPESC = 9 THEN 'LOTADO EM INTEGRAL'
-        WHEN B.CODESC IS NULL THEN 'SEM LOTACAO'
-        ELSE 'OUTRA LOTACAO'
-    END AS STATUS_LOTACAO
-    
-FROM CEPEA_SAS.dbo.CTG0126 AS A  -- Tabela A (contratações)
-LEFT JOIN CEPEA_SAS.dbo.ESCOLAS0126 AS B  -- Tabela B (escolas)
-    ON A.CODESC = B.CODESC  -- Condição de junção    
-WHERE A.DT_ADMISSAO > '2020-01-01'
-ORDER BY A.NM_SERVIDOR;
-
--- LEFT JOIN EX:.2: Exemplo com múltiplos JOINS
-SELECT 
-    C.*,
-    E.NOMESC,
-    D.NM_DIRETORIA
-FROM CEPEA_SAS.dbo.CTG0126 AS C
-LEFT JOIN CEPEA_SAS.dbo.ESCOLAS0126 AS E
-    ON C.CODESC = E.CODESC
-LEFT JOIN [012026].[TB_DIRETORIA] AS D
-    ON E.CD_DIRETORIA = D.CD_DIRETORIA
-WHERE C.DT_ADMISSAO IS NOT NULL;
-
--- UNION: combina resultados de múltiplas queries (remove duplicatas)
--- UNION ALL: mantém duplicatas (mais rápido)
-
-        -- Exemplo: lista combinada de UREs de diferentes fontes
-        SELECT 
-            CD_URE AS CODIGO,
-            NOME_URE AS NOME,
-            'TABELA_ESCOLAS' AS FONTE
-        FROM #ESCOLAS
-        WHERE NOME_URE LIKE 'NORTE%'
-        
-        UNION  -- Remove duplicatas entre os conjuntos
-        
-        SELECT 
-            CD_DIRETORIA AS CODIGO,
-            NM_DIRETORIA AS NOME,
-            'TB_DIRETORIA' AS FONTE
-        FROM [012026].[TB_DIRETORIA]
-        WHERE NM_DIRETORIA LIKE 'NORTE%'
-        
-        ORDER BY NOME, FONTE;
-        
-        -- UNION ALL mantém todos os registros (inclusive duplicados)
-        SELECT CODESC, NOMESC FROM #ESCOLAS WHERE NOME_URE = 'NORTE 1'
-        UNION ALL
-        SELECT CODESC, NOMESC FROM ESCOLAS1225 WHERE NOMEDE = 'NORTE 1'
-        ORDER BY CODESC;
-        
--- Regras do UNION:
--- 1. Mesmo número de colunas em cada SELECT
--- 2. Tipos de dados compatíveis nas colunas correspondentes
--- 3. Ordem das colunas deve corresponder
 
 *************************** FIM COMANDOS ELABORADOS *********************************
