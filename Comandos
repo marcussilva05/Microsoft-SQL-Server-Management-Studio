@@ -1,12 +1,12 @@
-*************************** COMANDOS *********************************
-
 /* 
-    DICA RÁPIDA:
-    = é para igual
-    <> ou != é para diferente
-    LIKE com % é coringa
-    Para textos use aspas simples 'texto'
-    Para números NÃO use aspas
+    _________________________________________
+    | IMPORTANTE!!!                          |
+    | = é para igual                         |
+    | <> ou != é para diferente              |
+    | LIKE com % é coringa                   |
+    | Para textos use aspas simples 'texto'  | 
+    | Para números NÃO use aspas             |
+	|________________________________________|
 ----------------------------------------------------------------------------
 	WHERE
 	coluna1 BETWEEN 100 AND 500 
@@ -14,7 +14,7 @@
 ----------------------------------------------------------------------------
 */
 
-******** AMBIENTAÇÃO ********
+************************************ AMBIENTAÇÃO ************************************
 
 -- Qual bd estou?              
 SELECT DB_NAME();
@@ -28,9 +28,9 @@ USE nome_do_banco;
 -- Executar bd
 EXEC sp_helpdb 'nome_do_banco';
 
-******** FIM AMBIENTAÇÃO ********
+************************************ FIM AMBIENTAÇÃO ************************************
 
-******** CONSULTAS ********
+************************************ CONSULTAS ************************************
 
 -- Consulta completa do bd
 SELECT *
@@ -52,9 +52,9 @@ SELECT DISTINCT
     coluna2
 FROM nome_da_tabela;
 
-******** FIM CONSULTAS ********
+************************************ FIM CONSULTAS ************************************
 
-******** PESQUISAS WHERE ********
+************************************ PESQUISAS WHERE ************************************
 
 -- pesquisas (LIKE, NOT LIKE, =, <>, MAIOR/MENOR/IGUAL, OR, AND, BETWEEN, IN, NOT IN, NULL/NOTNULL, DATAS/ENTRE DATAS, )
 SELECT 
@@ -115,9 +115,9 @@ WHERE
     YEAR(coluna1) = 2024;
     MONTH(coluna1) = 01;
 
-******** FIM PESQUISAS WHERE ********
+************************************ FIM PESQUISAS WHERE ************************************
 
-******** ORDENAR ********
+************************************ ORDENAR ************************************
 -- ordenações (PADRÃO ASC/DESC, MÚLTIPLAS COLUNAS, COLUNAS CONSIDERADAS NÚMEROS, STRINGS TERÃO POSIÇÕES ESPECÍFICAS, TAMANHO DO TEXTO, STRINGS TERÃO POSIÇÕES ESPECÍFICA, TRECHOS TERÃO POSIÇÕES ESPECÍFICAS, NULLS NO FINAL, ORDENAR ALEATÓRIO)
 SELECT
     coluna1, 
@@ -159,21 +159,25 @@ coluna1;  -- DESC para decrescente, ASC é o padrão
 ------------ ORDENAR ALEATÓRIO -----------------
 ORDER BY NEWID();  -- Ordem aleatória (SQL Server)
 
-******** FIM DE ORDENAR ********
+************************************ FIM DE ORDENAR ************************************
 
-******** AGRUPAR ********
-
- -- Agrupamento de dados
+************************************ AGRUPAR ************************************
+___________________________________________________________________________________
+| IMPORTANTE!!!                                                                    |
+| GROUP BY tem que ter função de agregação em SELECT (COUNT, SUM, AVG, MAX, MIN)   |
+|__________________________________________________________________________________|
+ -- Agrupamentos ()
 SELECT
-    coluna1, 
-    coluna2,
-    coluna3,
-    COUNT(*) AS TOTAL_ESCOLAS
-FROM nome_do_banco;
-GROUP BY CD_CARGO, NM_CARGO, CD_QUADRO, CD_CLASSE, CD_CARGO_NOVO
-ORDER BY TOTAL_ESCOLAS;  -- DESC para ver do maior para o menor
+    coluna1,
+    COUNT(*) AS total,      -- Obrigatório ter ao menos uma das agregação!
+    SUM(coluna2) AS soma,
+    AVG(coluna3) AS media,
+    MAX(data) AS ultimo,
+    MIN(data) AS primeiro
+FROM nome_do_banco
+GROUP BY coluna1; 
 
-******** FIM AGRUPAR ********
+************************************ FIM AGRUPAR ************************************
 
 
 
