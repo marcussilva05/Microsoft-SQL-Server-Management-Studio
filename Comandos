@@ -1,75 +1,70 @@
-*************************** INÍCIO COMANDOS *********************************
+*************************** COMANDOS *********************************
+
+******** AMBIENTAÇÃO ********
+
 -- Qual bd estou?              
 SELECT DB_NAME();
 
 -- Listar todos os bd
 SELECT name FROM sys.databases ORDER BY name;
 
--- Conecte ao banco nome_do_banco
+-- Usar bd
 USE nome_do_banco;
 
--- Localização física dos arquivos do banco
-SELECT 
-    name,
-    physical_name AS Localizacao,
-    size/128.0 AS Tamanho_MB
-FROM sys.master_files
-WHERE database_id = DB_ID('EstudoDB');
-
--- Informações completas
+-- Executar bd
 EXEC sp_helpdb 'nome_do_banco';
 
--- Top 10 linhas
-SELECT TOP 10 * FROM nome_da_tabela
+******** FIM AMBIENTAÇÃO ********
 
--- Seleção Distinta remove duplicatas dos resultados
--- Lista todas as UREs únicas
-SELECT DISTINCT NOME_URE
-FROM #ESCOLAS
-ORDER BY NOME_URE;
+******** CONSULTAS ********
 
--- Seleção Distinta DE Combinações únicas de múltiplas colunas
+-- Consulta completa do bd
+SELECT *
+FROM nome_da_tabela
+
+-- Consulta Top 10 
+SELECT TOP 10 *
+FROM nome_da_tabela
+
+-- Consulta Top 10 de colunas específicas
+SELECT TOP 10 * 
+    coluna1, 
+    coluna2
+FROM nome_da_tabela
+
+-- Consulta Distinta (remove duplicatas dos resultados)
 SELECT DISTINCT 
-    NOME_URE,
-    TIPO_ESCOLA,
-    CATEGORIA
-FROM #ESCOLAS
-ORDER BY NOME_URE, TIPO_ESCOLA;
-
--- Limpar a tabela criada
-DROP TABLE #temp_nome;
-
--- Limpar tabela recriá-la em looping
-DROP TABLE IF EXISTS #temp_01
-SELECT * INTO #temp_01 FROM nome_da_tabela
-
--- ORDENAR COLUNA
-SELECT coluna1, coluna2, ...
+    coluna1, 
+    coluna2
 FROM nome_da_tabela
-ORDER BY coluna1 [ASC|DESC], coluna2 [ASC|DESC], ...; -- se não tiver nada, ASC é o padrão
 
--- Ordenação por múltiplas colunas
-SELECT coluna1, coluna2, coluna3, ...
-FROM nome_da_tabela
-ORDER BY coluna1 ASC, coluna2 DESC, coluna3 ASC, ...;  -- se não tiver nada, ASC é o padrão
+******** FIM CONSULTAS ********
 
--- Contar colunas
-USE nome_do_banco;
-SELECT COUNT(*) AS NUMERO_COLUNAS
-FROM INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_NAME = 'nome_da_tabela_após_dbo'
-  AND TABLE_SCHEMA = 'DBO';
-
--- ISNULL
+-- Retirar NULL
 ISNULL(NOME_COLUNA,'') AS NOME_COLUNA
 
--- Criar temporária com as colunas desejadas
+-- Renomear colunas
 SELECT 
     NOME DA COLUNA01 AS NOVO NOME01,
-    NOME DA COLUNA02 AS NOVO NOME02,
-    NOME DA COLUNA03 AS NOVO NOME03
-INTO #temp_nome
+    NOME DA COLUNA02 AS NOVO NOME02
 FROM nome_do_banco;
+
+-- Ordenar colunas
+SELECT 
+    coluna1, 
+    coluna2
+FROM nome_da_tabela
+ORDER BY 
+    coluna1 [ASC|DESC],  
+    coluna2 [ASC|DESC]; 
+
+-- Dropar tabela e recriá-la em looping
+DROP TABLE IF EXISTS #temp_01
+SELECT 
+    coluna1, 
+    coluna2
+INTO #temp_01 
+FROM nome_da_tabela
 
 
 *************************** FIM COMANDOS *********************************
@@ -158,33 +153,25 @@ ORDER BY TOTAL_ESCOLAS;  -- DESC para ver do maior para o menor
 
 -- Filtro WHERE
 SELECT 
-    CD_URE,
-    NOME_URE,
-    CODESC,
-    NOMESC,
-    TIPO_ESCOLA,
-    MODALIDADE
-FROM #ESCOLAS
-WHERE -- WHERE sempre vem depois do FROM e antes do GROUP BY/ORDER BY
-    NOME_URE = 'NORTE 1'  -- Filtra apenas escolas da URE NORTE 1
-    AND TIPO_ESCOLA = 8   -- E apenas do tipo 8
-    AND CODESC > 100      -- E com código maior que 100
-ORDER BY CODESC;
-
--- Exemplo 2: WHERE com múltiplas condições e operadores
-SELECT *
-FROM #ESCOLAS
-WHERE 
-    -- Usando OR para múltiplas UREs
-    (NOME_URE = 'NORTE 1' OR NOME_URE = 'SUL 1')
-    -- Usando BETWEEN para intervalo
-    AND CODESC BETWEEN 100 AND 500
-    -- Usando LIKE para padrão de texto
-    AND NOMESC LIKE '%PROFESSOR%'  -- Escolas que contém "PROFESSOR" no nome
-    -- Usando IN para lista de valores
-    AND TIPO_ESCOLA IN (8, 9, 10)
-    -- Usando NOT para exclusão
-    AND CATEGORIA NOT IN ('VINCULADA', 'EXTINTA');
+	NOMEDE AS URE,
+	NOMEUA AS NOME_DA_ESCOLA,
+	UA
+INTO #URE
+FROM ARQDEUA1225
+	WHERE NOMEDE IN (
+		'CENTRO OESTE',
+		'ITAQUAQUECETUBA',
+		'JUNDIAI',
+		'MAUA',
+		'NORTE 1',
+		'PIRACICABA',
+		'RIBEIRAO PRE',
+		'SANTO ANDRE',
+		'SANTOS',
+		'SUL 1',
+		'SUL 2',
+		'SUL 3'
+	)
 
 -- filtro apenas quem tem certa quantidade  
 SELECT 
@@ -196,7 +183,7 @@ GROUP BY NOME_URE, TIPO_ESCOLA
 HAVING COUNT(*) > 5  -- Filtra apenas grupos com mais de 5 escolas
 ORDER BY TOTAL DESC;
 
--- LEFT Extrai caracteres do início da string
+-- extrair zeros de RG
 SELECT 
     -- Exemplo: pegar apenas os primeiros 12 caracteres do RG
     LEFT(NR_RG, 12) AS RG_TRUNCADO,
