@@ -235,6 +235,13 @@ ISNULL(coluna2, 0) AS com_zero,
 ------------ INVERSO DO IS NULL ------------
 NULLIF(coluna, 0) AS transforma_zero_em_null 
 
+--------- EXCLUIR UMA LINHA INTEIRA ---------
+DELETE FROM #temp_01 
+WHERE coluna1 IS NULL;
+
+--------- LIMPAR/EXCLUIR TABELA INTEIRA MANTENDO CABEÇALHO ---------
+TRUNCATE TABLE #temp_01;
+
 ------------ RENOMEAR COLUNAS ------------ 
     coluna1 AS novo_nome1,
     coluna2 AS novo_nome2
@@ -272,28 +279,21 @@ INSERT INTO #temp_01 (coluna1, coluna2)
 SELECT campo1, campo2 
 FROM outra_tabela 
 
---------- INSERIR DADOS ESPECÍFICOS DE UMA COLUNA DE outra_tabela EM COMPARAÇÃO COM AS COLUNAS DA TABELA #temp_01 ---------
+--------- INSERIR DADOS ESPECÍFICOS VINDOS DE UMA COLUNA DE outra_tabela EM COMPARAÇÃO COM AS COLUNAS DA TABELA #temp_01 ---------
 UPDATE t
-SET t.coluna1 = o.outra_tabela 
+SET t.coluna1 = o.coluna_outra 
 FROM #temp_01 t
-INNER JOIN outra_tabela o ON t.id = o.id; -- dados da coluna id em ambas que forem iguais farão substituições em t.coluna1 com novos valores vindos da coluna o.valor_corrigido.
+INNER JOIN outra_tabela o ON t.id = o.id; -- dados da coluna id em ambas que forem iguais farão substituições em t.coluna1 com novos valores vindos da coluna o.coluna_outra.
 
--- Atualização em massa
+--------- INSERIR DADOS ESPECÍFICOS VINDOS DE várias COLUNA DE outra_tabela EM COMPARAÇÃO COM várias COLUNAS DA TABELA #temp_01 ---------
 UPDATE #temp_01 
 SET 
     status = 'INATIVO',
     data_alteracao = GETDATE(),
     usuario = 'SISTEMA'
-WHERE data_cadastro < '2020-01-01';
+WHERE outra_tabela < '2020-01-01';
 
---------- 7. EXCLUIR LINHAS ---------
-DELETE FROM #temp_01 
-WHERE coluna1 IS NULL;
-
--- TRUNCATE (limpa TUDO, mais rápido)
-TRUNCATE TABLE #temp_01;
-
---------- 8. JUNTAR DUAS TEMPORÁRIAS ---------
+--------- CRIAR UMA NOVA TEMP #temp_uniao FORMADA POR COLUNAS DE #temp_a COM ACRÉSCIMO DE DADOS DAS COLUNAS DE #temp_b ABAIXO ---------
 -- UNION (empilha)
 SELECT * INTO #temp_uniao
 FROM (
