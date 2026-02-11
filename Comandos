@@ -1,5 +1,19 @@
 *************************** COMANDOS *********************************
 
+/* 
+    DICA RÁPIDA:
+    = é para igual
+    <> ou != é para diferente
+    LIKE com % é coringa
+    Para textos use aspas simples 'texto'
+    Para números NÃO use aspas
+----------------------------------------------------------------------------
+	WHERE
+	coluna1 BETWEEN 100 AND 500 
+	--BETWEEN é inclusivo (100 e 500 entram)
+----------------------------------------------------------------------------
+*/
+
 ******** AMBIENTAÇÃO ********
 
 -- Qual bd estou?              
@@ -20,29 +34,29 @@ EXEC sp_helpdb 'nome_do_banco';
 
 -- Consulta completa do bd
 SELECT *
-FROM nome_da_tabela
+FROM nome_da_tabela;
 
 -- Consulta Top 10 
 SELECT TOP 10 *
 FROM nome_da_tabela
 
 -- Consulta Top 10 de colunas específicas
-SELECT TOP 10 * 
+SELECT TOP 10 
     coluna1, 
     coluna2
-FROM nome_da_tabela
+FROM nome_da_tabela;
 
 -- Consulta Distinta (remove duplicatas dos resultados)
 SELECT DISTINCT 
     coluna1, 
     coluna2
-FROM nome_da_tabela
+FROM nome_da_tabela;
 
 ******** FIM CONSULTAS ********
 
 ******** PESQUISAS WHERE ********
 
--- pesquisas (LIKE, =, OR, AND, BETWEEN, IN, NOT IN)
+-- pesquisas (LIKE, NOT LIKE, =, <>, MAIOR/MENOR/IGUAL, OR, AND, BETWEEN, IN, NOT IN, NULL/NOTNULL, DATAS/ENTRE DATAS, )
 SELECT 
     coluna1, 
     coluna2,
@@ -50,10 +64,24 @@ SELECT
 FROM nome_do_banco
 WHERE 
 ------------ LIKE -----------------
-	coluna1 LIKE '%dado_pesquis%'
+	coluna1 LIKE '%dado_pesquis%';
+    coluna1 LIKE 'inicio%';     -- Começa com
+    coluna1 LIKE '%fim';        -- Termina com
 
------------- = -----------------
-	coluna1 = 'dado_pesquisado_01'
+------------ NOT LIKE -----------------
+	coluna1 NOT LIKE '%dado_pesquis%';
+
+------------ IGUAL -----------------
+	coluna1 = 'dado_pesquisado_01';
+
+------------ DIFERENTE -----------------
+	coluna1 <> 'dado_pesquisado_01';
+
+------------ MAIOR/MENOR/IGUAL -----------------
+    coluna1 > 100;
+    coluna1 >= 100;
+    coluna1 < 100;
+    coluna1 <= 100;
 
 ------------ OR -----------------
     coluna1 = 'dado_01' 
@@ -66,18 +94,88 @@ WHERE
 	AND coluna3 = 'dado_03';
 
 ------------ BETWEEN -----------------
-    coluna1 BETWEEN 100 AND 500
+    coluna1 BETWEEN 100 AND 500;
 
 ------------ IN -----------------
-    coluna1 IN ('dado_01', 'dado_02', 'dado_03');
+    coluna1 IN ('dado_01',
+	'dado_02', 
+	'dado_03');
 
 ------------ NOT IN -----------------
-    coluna1 NOT IN ('dado_01', 'dado_02', 'dado_03');
+    coluna1 NOT IN ('dado_01',
+	'dado_02', 
+	'dado_03');
+
+------------ NULL / NOT NULL -----------------
+    coluna1 IS NULL;
+    coluna1 IS NOT NULL;
+
+------------  DATAS/ENTRE DATAS -----------------
+    coluna1 BETWEEN '2024-01-01' AND '2024-12-31';
+    YEAR(coluna1) = 2024;
+    MONTH(coluna1) = 01;
 
 ******** FIM PESQUISAS WHERE ********
 
--- Retirar NULL
-ISNULL(NOME_COLUNA,'') AS NOME_COLUNA
+******** ORDENAR ********
+-- ordenações (PADRÃO ASC/DESC, MÚLTIPLAS COLUNAS, COLUNAS CONSIDERADAS NÚMEROS, STRINGS TERÃO POSIÇÕES ESPECÍFICAS, TAMANHO DO TEXTO, STRINGS TERÃO POSIÇÕES ESPECÍFICA, TRECHOS TERÃO POSIÇÕES ESPECÍFICAS, NULLS NO FINAL, ORDENAR ALEATÓRIO)
+SELECT
+    coluna1, 
+    coluna2,
+    coluna3
+FROM nome_do_banco
+ORDER BY 
+------------ PADRÃO ASC/DESC -----------------
+coluna1;  -- DESC para decrescente, ASC é o padrão
+
+------------ MÚLTIPLAS COLUNAS -----------------
+    coluna1,
+    coluna2;
+
+------------ COLUNAS CONSIDERADAS NÚMEROS -----------------
+	1, 3 -- 1 = primeira coluna do SELECT e 3 a terceira
+
+------------ TAMANHO DO TEXTO -----------------
+    LEN(coluna1) DESC;  -- Ordena pelo tamanho do texto
+
+------------ STRINGS TERÃO POSIÇÕES ESPECÍFICAS -----------------
+    CASE coluna1
+        WHEN 'dado01' THEN 1 -- qualquer que seja 'dado01' será 1º na ordenação
+        WHEN 'PENDENTE' THEN 2  -- qualquer que seja 'dado02' será 2º na ordenação
+        WHEN 'INATIVO' THEN 3 -- qualquer que seja 'dado03' será 3º na ordenação
+        ELSE 4 --demais 'dados' serão 4º na ordenação
+    END;
+
+------------ TRECHOS TERÃO POSIÇÕES ESPECÍFICAS -----------------
+    CASE 
+        WHEN coluna1 LIKE '%URGENTE%' THEN 1
+        WHEN coluna1 LIKE '%IMPORTANTE%' THEN 2  
+        ELSE 3
+    END,
+
+------------ NULLS NO FINAL -----------------
+    coluna1 ASC NULLS LAST;   -- Nulos no final (SQL Server 2022+)
+
+------------ ORDENAR ALEATÓRIO -----------------
+ORDER BY NEWID();  -- Ordem aleatória (SQL Server)
+
+******** FIM DE ORDENAR ********
+
+******** AGRUPAR ********
+
+ -- Agrupamento de dados
+SELECT
+    coluna1, 
+    coluna2,
+    coluna3,
+    COUNT(*) AS TOTAL_ESCOLAS
+FROM nome_do_banco;
+GROUP BY CD_CARGO, NM_CARGO, CD_QUADRO, CD_CLASSE, CD_CARGO_NOVO
+ORDER BY TOTAL_ESCOLAS;  -- DESC para ver do maior para o menor
+
+******** FIM AGRUPAR ********
+
+
 
 -- Renomear colunas
 SELECT 
@@ -94,13 +192,26 @@ ORDER BY
     coluna1 [ASC|DESC],  
     coluna2 [ASC|DESC]; 
 
+-- Retirar NULL
+ISNULL(NOME_COLUNA,'') AS NOME_COLUNA;
+
+-- Criar temporária com valores específicos da coluna de interesse
+CREATE TABLE #temp_nome AS
+SELECT * 
+FROM nome_do_banco 
+WHERE NOME_DA_COLUNA IN (
+    'dado_pesquisado_01', 
+    'dado_pesquisado_02', 
+    'dado_pesquisado_03' 
+);
+
 -- Dropar tabela e recriá-la em looping
 DROP TABLE IF EXISTS #temp_01
 SELECT 
     coluna1, 
     coluna2
 INTO #temp_01 
-FROM nome_da_tabela
+FROM nome_da_tabela;
 
 
 *************************** FIM COMANDOS *********************************
@@ -116,74 +227,6 @@ SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as col
               END               
               AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
 FROM dbo.nome_do_esquema -- Especifica a tabela de origem com esquema dbo
-
--- Criar temporária com valores específicos da coluna de interesse
-CREATE TABLE #temp_nome AS
-SELECT * 
-FROM nome_do_banco 
-WHERE NOME_DA_COLUNA IN (
-    'dado_pesquisado_01', 
-    'dado_pesquisado_02', 
-    'dado_pesquisado_03' 
-);
-
--- Listar todas as tabelas do nome_banco
-SELECT TABLE_SCHEMA, TABLE_NAME 
-FROM INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_TYPE = 'BASE TABLE'
-ORDER BY TABLE_NAME;
-
--- Listar todos os esquemas do nome_banco
-SELECT DISTINCT TABLE_SCHEMA 
-FROM INFORMATION_SCHEMA.TABLES 
-WHERE TABLE_NAME = 'TB_ESCOLA'
-ORDER BY TABLE_SCHEMA;
-
- -- Agrupamento de dados
-SELECT
-    NM_CARGO,
-    CD_CARGO,
-    CD_QUADRO,
-    CD_CLASSE,
-    CD_CARGO_NOVO,  
-    COUNT(*) AS TOTAL_ESCOLAS
-FROM [012020].[TB_CARGOS]
-WHERE 
-    CD_QUADRO IN ('1', '2', '3', '4')  -- Simplificado com IN
-GROUP BY CD_CARGO, NM_CARGO, CD_QUADRO, CD_CLASSE, CD_CARGO_NOVO
-ORDER BY TOTAL_ESCOLAS;  -- DESC para ver do maior para o menor
-
--- Filtro WHERE
-SELECT 
-	NOMEDE AS URE,
-	NOMEUA AS NOME_DA_ESCOLA,
-	UA
-INTO #URE
-FROM ARQDEUA1225
-	WHERE NOMEDE IN (
-		'CENTRO OESTE',
-		'ITAQUAQUECETUBA',
-		'JUNDIAI',
-		'MAUA',
-		'NORTE 1',
-		'PIRACICABA',
-		'RIBEIRAO PRE',
-		'SANTO ANDRE',
-		'SANTOS',
-		'SUL 1',
-		'SUL 2',
-		'SUL 3'
-	)
-
--- filtro apenas quem tem certa quantidade  
-SELECT 
-    NOME_URE,
-    TIPO_ESCOLA,
-    COUNT(*) AS TOTAL
-FROM #ESCOLAS
-GROUP BY NOME_URE, TIPO_ESCOLA
-HAVING COUNT(*) > 5  -- Filtra apenas grupos com mais de 5 escolas
-ORDER BY TOTAL DESC;
 
 -- extrair zeros de RG
 SELECT 
