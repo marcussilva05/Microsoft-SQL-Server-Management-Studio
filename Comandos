@@ -41,6 +41,14 @@ SELECT
     ) AS CODIGO_REDUZIDO
 FROM #ESCOLAS A;
 
+-- campo de e-mail faltando
+SELECT DISTINCT
+	COLUNA1
+	COALESCE(NULLIF(EMAIL_INST2, ''), EMAIL_INST1) AS EMAILI_DIRETOR,  -- NULLIF converte string vazia para NULL, só assim COALESCE funciona para acrescentar e-mail2 quando email1 for vazio 
+	COLUNA3
+INTO #DIR 
+FROM CTG1225
+
 *************************** FIM COMANDOS EATI *********************************
 
 ************************************ AMBIENTAÇÃO ************************************
