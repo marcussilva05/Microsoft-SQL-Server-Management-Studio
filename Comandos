@@ -307,6 +307,37 @@ SET t.coluna1 = o.coluna_outra
 FROM #temp_01 t
 INNER JOIN outra_tabela o ON t.id = o.id; -- dados da coluna id em ambas que forem iguais farão substituições em t.coluna1 com novos valores vindos da coluna o.coluna_outra.
 
+-- ANTES: #temp_01 (t)
+╔════╦══════════╦═══════╗
+║ id ║ coluna1  ║ nome  ║
+╠════╬══════════╬═══════╣
+║ 1  �antigo     ║ Ana   ║
+║ 2  ║antigo    ║ Bruno ║
+║ 3  ║antigo    ║ Carla ║
+╚════╩══════════╩═══════╝
+
+-- ANTES: tabela_origem (o)
+╔════╦═══════════════╗
+║ id ║ valor_corrigido║
+╠════╬═══════════════╣
+║ 1  ║ corrigido_1   ║
+║ 2  ║ corrigido_2   ║
+╚════╩═══════════════╝
+
+-- COMANDO (JOIN)
+UPDATE t
+SET t.coluna1 = o.valor_corrigido
+FROM #temp_01 t
+INNER JOIN tabela_origem o ON t.id = o.id;
+
+-- DEPOIS: #temp_01 (só IDs 1 e 2 mudaram, 3 ficou igual!)
+╔════╦═══════════════╦═══════╗
+║ id ║ coluna1       ║ nome  ║
+╠════╬═══════════════╬═══════╣
+║ 1  ║ corrigido_1   ║ Ana   ║  ← Mudou (match)
+║ 2  ║ corrigido_2   ║ Bruno ║  ← Mudou (match)
+║ 3  ║ antigo        ║ Carla ║  ← Não mudou (sem match)
+╚════╩═══════════════╩═══════╝
 --------- INSERIR DADOS ESPECÍFICOS VINDOS DE várias COLUNA DE outra_tabela EM COMPARAÇÃO COM várias COLUNAS DA TABELA #temp_01 ---------
 UPDATE #temp_01 
 SET 
@@ -332,6 +363,40 @@ FROM (
 ) AS uniao; --isso é apenas apelido da subconsulta
 
 
+-- ANTES: #temp_a
+╔══════╦══════╗
+║ col1 ║ col2 ║
+╠══════╬══════╣
+║ A1   ║ X1   ║
+║ A2   ║ X2   ║
+╚══════╩══════╝
+
+-- ANTES: #temp_b
+╔══════╦══════╗
+║ col1 ║ col2 ║
+╠══════╬══════╣
+║ B1   ║ Y1   ║
+║ B2   ║ Y2   ║
+╚══════╩══════╝
+
+-- COMANDO (UNION ALL)
+SELECT * INTO #temp_uniao
+FROM (
+    SELECT col1, col2 FROM #temp_a
+    UNION ALL
+    SELECT col1, col2 FROM #temp_b
+) AS uniao;  -- ← Isso é só APELIDO da subconsulta!
+
+-- DEPOIS: #temp_uniao
+╔══════╦══════╗
+║ col1 ║ col2 ║  ← 2 COLUNAS SEPARADAS!
+╠══════╬══════╣
+║ A1   ║ X1   ║
+║ A2   ║ X2   ║
+║ B1   ║ Y1   ║
+║ B2   ║ Y2   ║
+╚══════╩══════╝
+
 --------- TRÊS COLUNAS DE TRÊS TABELAS DIFERENTES A, B, C em  #temp_join ---------
 SELECT 
     a.*,
@@ -341,6 +406,52 @@ INTO #temp_join
 FROM #temp_a a
 LEFT JOIN #temp_b b ON a.id = b.id
 INNER JOIN #temp_c c ON a.id = c.id;
+
+-- ANTES: #temp_a
+╔════╦════════╗
+║ id ║ nome   ║
+╠════╬════════╣
+║ 1  ║ Ana    ║
+║ 2  ║ Bruno  ║
+║ 3  ║ Carla  ║
+╚════╩════════╝
+
+-- ANTES: #temp_b
+╔════╦════════════╗
+║ id ║ coluna_extra║
+╠════╬════════════╣
+║ 1  ║ Extra1     ║
+║ 3  ║ Extra3     ║
+╚════╩════════════╝
+
+-- ANTES: #temp_c
+╔════╦══════════════╗
+║ id ║ outra_coluna ║
+╠════╬══════════════╣
+║ 1  ║ Outra1       ║
+║ 2  ║ Outra2       ║
+║ 3  ║ Outra3       ║
+╚════╩══════════════╝
+
+-- COMANDO (LEFT JOIN c/ INNER JOIN)
+SELECT 
+    a.*,
+    b.coluna_extra,
+    c.outra_coluna
+INTO #temp_join
+FROM #temp_a a
+LEFT JOIN #temp_b b ON a.id = b.id      -- Tudo de A + match B
+INNER JOIN #temp_c c ON a.id = c.id;    -- Só IDs que existem em C
+
+-- DEPOIS: #temp_join
+╔════╦════════╦═════════════╦══════════════╗
+║ id ║ nome   ║ coluna_extra║ outra_coluna ║
+╠════╬════════╬═════════════╬══════════════╣
+║ 1  ║ Ana    ║ Extra1      ║ Outra1       ║  ← Tem em B e C
+║ 2  ║ Bruno  ║ NULL        ║ Outra2       ║  ← Não tem B, mas tem C
+║ 3  ║ Carla  ║ Extra3      ║ Outra3       ║  ← Tem B e C
+╚════╩════════╩═════════════╩══════════════╝
+-- ⚠️ Bruno entrou pq tem INNER JOIN com C (id=2 existe em C)
 
 --------- MERGE: PUXA DADOS DE ORIGEM E MANTÉM DADOS SEMELHANTES AOS DO DESTINO, ACRESCENTANDO OS NOVOS ---------
 MERGE INTO #temp_destino AS destino
@@ -353,6 +464,43 @@ WHEN MATCHED THEN
 WHEN NOT MATCHED THEN
     INSERT (id, nome, valor)
     VALUES (origem.id, origem.nome, origem.valor);
+
+-- ANTES: #temp_destino
+╔════╦════════╦═══════╗
+║ id ║ nome   ║ valor ║
+╠════╬════════╬═══════╣
+║ 1  ║ Ana    ║ 100   ║
+║ 2  ║ Bruno  ║ 200   ║
+╚════╩════════╩═══════╝
+
+-- ANTES: #temp_origem
+╔════╦════════╦═══════╗
+║ id ║ nome   ║ valor ║
+╠════╬════════╬═══════╣
+║ 2  ║ Bruno  ║ 250   ║  ← UPDATE (já existe)
+║ 3  ║ Carla  ║ 300   ║  ← INSERT (novo)
+╚════╩════════╩═══════╝
+
+-- COMANDO MERGE
+MERGE INTO #temp_destino AS destino
+USING #temp_origem AS origem
+    ON destino.id = origem.id
+WHEN MATCHED THEN
+    UPDATE SET 
+        destino.nome = origem.nome,
+        destino.valor = origem.valor
+WHEN NOT MATCHED THEN
+    INSERT (id, nome, valor)
+    VALUES (origem.id, origem.nome, origem.valor);
+
+-- DEPOIS: #temp_destino
+╔════╦════════╦═══════╗
+║ id ║ nome   ║ valor ║
+╠════╬════════╬═══════╣
+║ 1  ║ Ana    ║ 100   ║  ← Não foi alterado (não veio na origem)
+║ 2  ║ Bruno  ║ 250   ║  ← UPDATE (valor mudou de 200 → 250)
+║ 3  ║ Carla  ║ 300   ║  ← INSERT (novo registro)
+╚════╩════════╩═══════╝
 
 --------- 10. ORDENAR DADOS NA TEMP ---------
 -- Temp não tem ordem, mas você pode criar uma coluna de ordem
