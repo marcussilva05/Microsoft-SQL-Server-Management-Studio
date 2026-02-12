@@ -236,7 +236,7 @@ HAVING COUNT(*) > 10  -- Só categorias com +10 produtos
 
 ************************************ FIM AGRUPAR ************************************
 
-************************************ TEMPORÁRIAS ************************************
+************************************ CRIAR TEMPORÁRIAS ************************************
 
 ------------ Criar Temporária ------------
 DROP TABLE IF EXISTS #temp_01;
@@ -254,7 +254,7 @@ FROM nome_da_tabela;  -- Cria cópia da estrutura, sem dados
 
 ************************************ FIM TEMPORÁRIAS ************************************
 
-************************************ EDITAR TEMPORÁRIAS ************************************
+************************************ EDITAR CRIAR TEMPORÁRIAS ************************************
 -- O DROP TABLE deve vir ANTES do SELECT INTO, não no meio!
 
 DROP TABLE IF EXISTS #temp_01;
