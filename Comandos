@@ -226,8 +226,14 @@ FROM nome_da_tabela;  -- Cria cópia da estrutura, sem dados
 ************************************ FIM TEMPORÁRIAS ************************************
 
 ************************************ EDITAR TEMPORÁRIAS ************************************
+-- O DROP TABLE deve vir ANTES do SELECT INTO, não no meio!
+
 DROP TABLE IF EXISTS #temp_01;
 SELECT
+    coluna1,
+    coluna2
+INTO #temp_01 
+FROM nome_da_tabela;
 ------------ RETIRAR NULL ------------
 ISNULL(coluna1,'') AS novo_nome1,
 ISNULL(coluna2, 0) AS com_zero, 
@@ -294,7 +300,30 @@ VALUES
 -- Atualização simples
 UPDATE #temp_01 
 SET coluna1 = 'novo_valor'
-WHERE coluna2 = 'dado02'; -- todos os dados da coluna1 que estão paralelos ao dado02 da coluna2 serão modificados para novo_valor
+WHERE id = 1;
+
+-- ANTES: #temp_01
+╔════╦══════════╦═══════╗
+║ id ║ coluna1  ║ preco ║
+╠════╬══════════╬═══════╣
+║ 1  ║ Ativo    ║ 100   ║
+║ 2  ║ Inativo  ║ 200   ║
+║ 3  ║ Ativo    ║ 150   ║
+╚════╩══════════╩═══════╝
+
+-- COMANDO
+UPDATE #temp_01 
+SET coluna1 = 'novo_valor'
+WHERE id = 1;
+
+-- DEPOIS: #temp_01 (só mudou o VALOR da linha 1)
+╔════╦═════════════╦═══════╗
+║ id ║ coluna1     ║ preco ║  ← CABEÇALHO IGUAL!
+╠════╬═════════════╬═══════╣
+║ 1  ║ novo_valor  ║ 100   ║  ← DADO ALTERADO
+║ 2  ║ Inativo     ║ 200   ║
+║ 3  ║ Ativo       ║ 150   ║
+╚════╩═════════════╩═══════╝
 
 --------- INSERIR COLUNAS DE UMA outra_tabela EM CIMA DAS COLUNAS DA TABELA #temp_01 ---------
 INSERT INTO #temp_01 (coluna1, coluna2)
@@ -339,13 +368,14 @@ INNER JOIN tabela_origem o ON t.id = o.id;
 ║ 3  ║ antigo        ║ Carla ║  ← Não mudou (sem match)
 ╚════╩═══════════════╩═══════╝
 --------- INSERIR DADOS ESPECÍFICOS VINDOS DE várias COLUNA DE outra_tabela EM COMPARAÇÃO COM várias COLUNAS DA TABELA #temp_01 ---------
-UPDATE #temp_01 
+UPDATE t
 SET 
-    status = 'INATIVO',
-    data_alteracao = GETDATE(),
-    usuario = 'SISTEMA'
-WHERE outra_tabela < '2020-01-01';
-
+    t.status = 'INATIVO',
+    t.data_alteracao = GETDATE(),
+    t.usuario = 'SISTEMA'
+FROM #temp_01 t
+INNER JOIN outra_tabela o ON t.id = o.id
+WHERE o.data_cadastro < '2020-01-01';  
 --------- CRIAR UMA NOVA TEMP #temp_uniao FORMADA POR COLUNAS DE #temp_a COM ACRÉSCIMO DE DADOS DAS COLUNAS DE #temp_b ABAIXO ---------
 -- UNION (empilha)
 SELECT * 
@@ -453,8 +483,8 @@ INNER JOIN #temp_c c ON a.id = c.id;    -- Só IDs que existem em C
 ╚════╩════════╩═════════════╩══════════════╝
 -- ⚠️ Bruno entrou pq tem INNER JOIN com C (id=2 existe em C)
 
---------- MERGE: PUXA DADOS DE ORIGEM E MANTÉM DADOS SEMELHANTES AOS DO DESTINO, ACRESCENTANDO OS NOVOS ---------
-MERGE INTO #temp_destino AS destino
+--------- MERGE: SINCRONIZA TABELAS (UPDATE + INSERT AUTOMÁTICO) ---------
+-- ATUALIZA registros existentes e INSERE os novos em UM COMANDO SÓMERGE INTO #temp_destino AS destino
 USING #temp_origem AS origem
     ON destino.id = origem.id
 WHEN MATCHED THEN
@@ -502,7 +532,7 @@ WHEN NOT MATCHED THEN
 ║ 3  ║ Carla  ║ 300   ║  ← INSERT (novo registro)
 ╚════╩════════╩═══════╝
 
---------- 10. ORDENAR DADOS NA TEMP ---------
+--------- ORDENAR DADOS DE UMA COLUNA NA TEMP, CRIANDO ÚLTIMA COLUNA COM ORDEM NUMÉRICA (TIPO ID)---------
 -- Temp não tem ordem, mas você pode criar uma coluna de ordem
 SELECT 
     *,
@@ -510,48 +540,87 @@ SELECT
 INTO #temp_ordenada
 FROM #temp_01;
 
---------- 11. ADICIONAR CONSTRAINT (PK, FK, CHECK) ---------
+-- ANTES: #temp_01 (sem ordem garantida)
+╔════╦════════════╦═══════╗
+║ id ║ data       ║ valor ║
+╠════╬════════════╬═══════╣
+║ 3  ║ 2024-01-01 ║ 300   ║
+║ 1  ║ 2024-03-01 ║ 100   ║
+║ 2  ║ 2024-02-01 ║ 200   ║
+╚════╩════════════╩═══════╝
+
+-- COMANDO
+SELECT 
+    *,
+    ROW_NUMBER() OVER (ORDER BY data DESC) AS ordem_prioridade
+INTO #temp_ordenada
+FROM #temp_01;
+
+-- DEPOIS: #temp_ordenada (ordem FÍSICA, não só exibição!)
+╔════╦════════════╦═══════╦══════════════════╗
+║ id ║ data       ║ valor ║ ordem_prioridade ║
+╠════╬════════════╬═══════╬══════════════════╣
+║ 1  ║ 2024-03-01 ║ 100   ║ 1               ║  ← Mais recente
+║ 2  ║ 2024-02-01 ║ 200   ║ 2               ║
+║ 3  ║ 2024-01-01 ║ 300   ║ 3               ║
+╚════╩════════════╩═══════╩══════════════════╝
+-- ⚠️ DIFERENÇA: ORDER BY normal só ORDENA EXIBIÇÃO
+--    ROW_NUMBER CRIA COLUNA com números sequenciais
+
+--------- CHECAR ERROS ESPECÍFICOS E CORRIGÍ-LOS ---------
 ALTER TABLE #temp_01
 ADD CONSTRAINT pk_temp PRIMARY KEY (id);  -- Chave primária
 
 ALTER TABLE #temp_01
 ADD CONSTRAINT ck_idade CHECK (idade >= 0);  -- Regra de validação
 
---------- 12. CRIAR CÓPIA EXATA ---------
+-- ANTES: #temp_01 (sem restrições)
+╔════╦════════╦═══════╗
+║ id ║ nome   ║ idade ║
+╠════╬════════╬═══════╣
+║ 1  ║ Ana    ║ 25    ║
+║ 1  ║ Ana2   ║ 30    ║  ← Permite DUPLICADO!
+║ 2  ║ Bruno  ║ -5    ║  ← Permite IDADE NEGATIVA!
+╚════╩════════╩═══════╝
+
+-- COMANDO 1: PK
+ALTER TABLE #temp_01
+ADD CONSTRAINT pk_temp PRIMARY KEY (id);  
+-- ❌ ERRO! Tem id duplicado (1,1)
+
+-- CORRIGINDO...
+DELETE FROM #temp_01 WHERE nome = 'Ana2';  -- Remove duplicata
+
+ALTER TABLE #temp_01
+ADD CONSTRAINT pk_temp PRIMARY KEY (id);  
+-- ✅ AGORA FUNCIONA!
+
+-- COMANDO 2: CHECK
+ALTER TABLE #temp_01
+ADD CONSTRAINT ck_idade CHECK (idade >= 0);
+-- ❌ ERRO! Tem idade negativa (-5)
+
+-- CORRIGINDO...
+UPDATE #temp_01 SET idade = 5 WHERE idade = -5;
+
+ALTER TABLE #temp_01
+ADD CONSTRAINT ck_idade CHECK (idade >= 0);
+-- ✅ AGORA FUNCIONA!
+
+-- DEPOIS: #temp_01
+╔════╦════════╦═══════╗
+║ id ║ nome   ║ idade ║
+╠════╬════════╬═══════╣
+║ 1  ║ Ana    ║ 25    ║  ← PK impede novo id=1
+║ 2  ║ Bruno  ║ 5     ║  ← CHECK impede idade < 0
+╚════╩════════╩═══════╝
+
+--------- CRIAR CÓPIA EXATA ---------
 -- Estrutura + dados
 SELECT * INTO #temp_copia FROM #temp_original;
 
 -- Só estrutura (sem dados)
 SELECT TOP 0 * INTO #temp_vazia FROM #temp_original;
-
---------- 13. VER ESTRUTURA DA TEMP ---------
--- No SSMS: sp_help
-EXEC tempdb..sp_help '#temp_01';
-
--- Colunas e tipos
-SELECT 
-    c.name AS coluna,
-    t.name AS tipo,
-    c.max_length AS tamanho,
-    c.is_nullable AS permite_null
-FROM tempdb.sys.columns c
-JOIN tempdb.sys.types t ON c.user_type_id = t.user_type_id
-WHERE object_id = OBJECT_ID('tempdb..#temp_01');
-
---------- 14. LIMPAR TEMPORÁRIAS ---------
--- Remove uma específica
-DROP TABLE IF EXISTS #temp_01;
-
--- Remove TODAS da sua sessão (cuidado!)
-DECLARE @sql VARCHAR(MAX) = '';
-SELECT @sql = @sql + 'DROP TABLE ' + name + ';'
-FROM tempdb.sys.tables 
-WHERE name LIKE '#%' AND name NOT LIKE '##%'
-AND object_id IN (
-    SELECT object_id FROM tempdb.sys.objects
-    WHERE session_id = @@SPID
-);
-EXEC(@sql);
 
 
 ************************************ FIM EDITAR TEMPORÁRIAS ************************************
