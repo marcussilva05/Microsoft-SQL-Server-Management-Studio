@@ -252,9 +252,9 @@ SELECT TOP 0 *
 INTO #temp_vazia 
 FROM nome_da_tabela;  -- Cria cópia da estrutura, sem dados
 
-************************************ FIM TEMPORÁRIAS ************************************
+************************************ FIM CRIAR TEMPORÁRIAS ************************************
 
-************************************ EDITAR CRIAR TEMPORÁRIAS ************************************
+************************************ EDITAR TEMPORÁRIAS ************************************
 -- O DROP TABLE deve vir ANTES do SELECT INTO, não no meio!
 
 DROP TABLE IF EXISTS #temp_01;
