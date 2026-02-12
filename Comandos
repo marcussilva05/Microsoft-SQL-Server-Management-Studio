@@ -13,6 +13,35 @@
 	--BETWEEN é inclusivo (100 e 500 entram)
 ----------------------------------------------------------------------------
 */
+*************************** COMANDOS EATI *********************************
+-- Criação de e-mails
+SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as colunas (*)            
+              CASE  -- Inicia um CASE para lógica condicional                  
+                  WHEN CATESC='VINCULADA' THEN -- Condição: quando a coluna CATESC for igual a 'VINCULADA' então
+                      CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') -- Se acima for verdadeiro: cria um email concatenando String 'e' com o número de ESCVINC em 6 dígitos (preenche com zeros à esquerda se ESCVINC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'                
+                  ELSE -- Se falso:
+                      CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')   -- cria um email concatenando String 'e' com o número de CODESC em 6 dígitos (preenche com zeros à esquerda se CODESC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'      
+              END               
+              AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
+FROM dbo.nome_do_esquema -- Especifica a tabela de origem com esquema dbo
+
+-- extrair zeros de RG
+SELECT 
+    -- Exemplo: pegar apenas os primeiros 12 caracteres do RG
+    LEFT(NR_RG, 12) AS RG_TRUNCADO,
+    -- Exemplo prático com nomes: primeiras 3 letras da URE
+    LEFT(NOME_URE, 3) AS SIGLA_URE,
+    -- Exemplo: código reduzido (primeiros 3 dígitos)
+    LEFT(CODESC, 3) AS PREFIXO_CODIGO,
+    -- Combine com outras funções
+    CONCAT(
+        LEFT(NOME_URE, 3),  -- Primeiras 3 letras da URE
+        '-',
+        LEFT(NOMESC, 10)    -- Primeiras 10 letras da escola
+    ) AS CODIGO_REDUZIDO
+FROM #ESCOLAS A;
+
+*************************** FIM COMANDOS EATI *********************************
 
 ************************************ AMBIENTAÇÃO ************************************
 
@@ -247,6 +276,17 @@ WHERE coluna1 IS NULL;
 
 --------- LIMPAR/EXCLUIR TABELA INTEIRA MANTENDO CABEÇALHO ---------
 TRUNCATE TABLE #temp_01;
+
+--------- CRIAR CÓPIA EXATA ---------
+-- Estrutura + dados
+SELECT * 
+INTO #temp_copia 
+FROM #temp_original;
+
+-- Só estrutura (sem dados)
+SELECT TOP 0 * 
+INTO #temp_vazia 
+FROM #temp_original;
 
 ------------ RENOMEAR COLUNAS ------------ 
     coluna1 AS novo_nome1,
@@ -615,42 +655,4 @@ ADD CONSTRAINT ck_idade CHECK (idade >= 0);
 ║ 2  ║ Bruno  ║ 5     ║  ← CHECK impede idade < 0
 ╚════╩════════╩═══════╝
 
---------- CRIAR CÓPIA EXATA ---------
--- Estrutura + dados
-SELECT * INTO #temp_copia FROM #temp_original;
-
--- Só estrutura (sem dados)
-SELECT TOP 0 * INTO #temp_vazia FROM #temp_original;
-
-
 ************************************ FIM EDITAR TEMPORÁRIAS ************************************
-
-*************************** INÍCIO COMANDOS ELABORADOS *********************************
--- Criação de e-mails
-SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as colunas (*)            
-              CASE  -- Inicia um CASE para lógica condicional                  
-                  WHEN CATESC='VINCULADA' THEN -- Condição: quando a coluna CATESC for igual a 'VINCULADA' então
-                      CONCAT('e', FORMAT(ESCVINC, '000000'), 'a@educacao.sp.gov.br') -- Se acima for verdadeiro: cria um email concatenando String 'e' com o número de ESCVINC em 6 dígitos (preenche com zeros à esquerda se ESCVINC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'                
-                  ELSE -- Se falso:
-                      CONCAT('e', FORMAT(CODESC, '000000'), 'a@educacao.sp.gov.br')   -- cria um email concatenando String 'e' com o número de CODESC em 6 dígitos (preenche com zeros à esquerda se CODESC < 6 dígitos) concatena com String 'a@educacao.sp.gov.br'      
-              END               
-              AS EMAIL -- Nome da nova coluna calculada como 'EMAIL'
-FROM dbo.nome_do_esquema -- Especifica a tabela de origem com esquema dbo
-
--- extrair zeros de RG
-SELECT 
-    -- Exemplo: pegar apenas os primeiros 12 caracteres do RG
-    LEFT(NR_RG, 12) AS RG_TRUNCADO,
-    -- Exemplo prático com nomes: primeiras 3 letras da URE
-    LEFT(NOME_URE, 3) AS SIGLA_URE,
-    -- Exemplo: código reduzido (primeiros 3 dígitos)
-    LEFT(CODESC, 3) AS PREFIXO_CODIGO,
-    -- Combine com outras funções
-    CONCAT(
-        LEFT(NOME_URE, 3),  -- Primeiras 3 letras da URE
-        '-',
-        LEFT(NOMESC, 10)    -- Primeiras 10 letras da escola
-    ) AS CODIGO_REDUZIDO
-FROM #ESCOLAS A;
-
-*************************** FIM COMANDOS ELABORADOS *********************************
