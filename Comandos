@@ -664,3 +664,118 @@ ADD CONSTRAINT ck_idade CHECK (idade >= 0);
 ╚════╩════════╩═══════╝
 
 ************************************ FIM EDITAR TEMPORÁRIAS ************************************
+
+************************************ CONSULTAS JOIN ************************************
+SELECT * 
+FROM TabelaA
+ALGUM JOIN TabelaB B ON A.colunaA = B.colunaB -- (colunaA e colunaB devem conter dados semelhantes)
+
+-- Tipos de JOIN
+INNER JOIN: Quando só importa o que existe em ambas
+LEFT JOIN: Quando precisa de tudo da tabela principal, mesmo sem correspondência
+RIGHT JOIN: Raramente usado (prefira LEFT JOIN invertendo as tabelas)
+FULL JOIN: Quando precisa de todos os dados de ambas, independente de correspondência
+CROSS JOIN: Quando precisa de todas as combinações possíveis (ex: produtos e tamanhos)
+SELF JOIN: Para hierarquias ou comparações dentro da mesma tabela
+
+-- Conjuntos base
+┌─────────┐    ┌─────────┐
+│    A    │    │    B    │
+│  1,2,3  │    │  2,3,4  │
+└─────────┘    └─────────┘
+
+-- INNER JOIN → (A ∩ B)
+    ┌─────────────┐
+    │     A       │
+    │   ┌─────┐   │
+    │   │ 2,3 │   │
+    │   └─────┘   │
+    │     B       │
+    └─────────────┘
+
+-- LEFT JOIN → (Todo A)
+    ┌─────────────────┐
+    │        A        │
+    │  ┌───────────┐  │
+    │  │ 1, 2, 3   │  │
+    │  │ com       │  │
+    │  │ dados de B│  │
+    │  │ qdo existir│  │
+    │  └───────────┘  │
+    │                 │
+    └─────────────────┘
+
+-- RIGHT JOIN → (Todo B)
+    ┌─────────────────┐
+    │        B        │
+    │  ┌───────────┐  │
+    │  │ 2, 3, 4   │  │
+    │  │ com       │  │
+    │  │ dados de A│  │
+    │  │ qdo existir│  │
+    │  └───────────┘  │
+    │                 │
+    └─────────────────┘
+
+-- FULL OUTER JOIN → (A ∪ B)
+    ┌─────────────────┐
+    │  ┌─────┐ ┌─────┐│
+    │  │  1  │ │  4  ││
+    │  └─────┘ └─────┘│
+    │    ┌─────────┐   │
+    │    │   2,3   │   │
+    │    └─────────┘   │
+    │  A       B       │
+    └─────────────────┘
+
+-- CROSS JOIN → (A × B)
+A: 1 ─┬─ 2
+      ├─ 3
+      └─ 4
+A: 2 ─┬─ 2
+      ├─ 3
+      └─ 4
+A: 3 ─┬─ 2
+      ├─ 3
+      └─ 4
+
+-- SELF JOIN (tabela consigo mesma)
+    Funcionarios
+    ┌─────────────────┐
+    │  ID  Nome  Ger ID│
+    │  1   João   NULL │
+    │  2   Maria   1   │
+    │  3   Pedro   1   │
+    └─────────────────┘
+          ⬇️
+    ┌─────────────────┐
+    │Maria trabalha p/│
+    │      João       │
+    │Pedro trabalha p/│
+    │      João       │
+    └─────────────────┘
+
+
+************************************ FIM CONSULTAS JOIN ************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
