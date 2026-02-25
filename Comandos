@@ -49,6 +49,14 @@ SELECT DISTINCT
 INTO #DIR 
 FROM CTG1225
 
+-- campo de e-mail faltando
+SELECT DISTINCT
+	COLUNA1
+	COALESCE(COLUNA1, 'REGULAR', '') AS NOVA_COLUNA1,  -- Testa COLUNA1, se NULL usa 'REGULAR'
+	COLUNA3
+INTO #DIR 
+FROM CTG1225
+
 *************************** FIM COMANDOS EATI *********************************
 
 ************************************ AMBIENTAÇÃO ************************************
