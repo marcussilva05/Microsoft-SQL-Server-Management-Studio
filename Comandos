@@ -162,15 +162,14 @@ WHERE
 
 ------------  FILTRO DE DUPLICATAS -----------------
 WITH RANK1 AS (
-    SELECT 
-        *,
+    SELECT *, 
         ROW_NUMBER() OVER (PARTITION BY Coluna ORDER BY (SELECT NULL)) AS ROW
-    FROM #BASE
+    FROM #BASE 
 )
 SELECT *
 FROM RANK1 
 WHERE ROW = 1
-ORDER BY CPF
+ORDER BY Coluna
 
 ************************************ FIM PESQUISAS WHERE ************************************
 
@@ -777,6 +776,17 @@ A: 3 ─┬─ 2
 
 ************************************ FIM CONSULTAS JOIN ************************************
 
+************************************ COMPARAR DUAS COLUNAS TIPO PROCV ************************************
+SELECT DISTINCT ColunaA
+FROM Basex A
+WHERE NOT EXISTS (
+    SELECT 1 
+    FROM Basey B 
+    WHERE B.ColunaB = A.ColunaA
+)
+ORDER BY ColunaA;
+
+************************************ FIM COMPARAR DUAS COLUNAS TIPO PROCV ************************************
 
 
 
