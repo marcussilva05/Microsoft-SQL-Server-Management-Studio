@@ -62,16 +62,16 @@ FROM CTG1225
 ************************************ AMBIENTAÇÃO ************************************
 
 -- Qual bd estou?              
-SELECT DB_NAME();
+SELECT DB_NAME()
 
 -- Listar todos os bd
-SELECT name FROM sys.databases ORDER BY name;
+SELECT name FROM sys.databases ORDER BY name
 
 -- Usar bd
-USE nome_do_banco;
+USE nome_do_banco
 
 -- Executar bd
-EXEC sp_helpdb 'nome_do_banco';
+EXEC sp_helpdb 'nome_do_banco'
 
 ************************************ FIM AMBIENTAÇÃO ************************************
 
@@ -79,7 +79,7 @@ EXEC sp_helpdb 'nome_do_banco';
 
 -- Consulta completa do bd
 SELECT *
-FROM nome_da_tabela;
+FROM nome_da_tabela
 
 -- Consulta Top 10 
 SELECT TOP 10 *
@@ -89,13 +89,13 @@ FROM nome_da_tabela
 SELECT TOP 10 
     coluna1, 
     coluna2
-FROM nome_da_tabela;
+FROM nome_da_tabela
 
 -- Consulta Distinta (remove duplicatas dos resultados)
 SELECT DISTINCT 
     coluna1, 
     coluna2
-FROM nome_da_tabela;
+FROM nome_da_tabela
 
 ************************************ FIM CONSULTAS ************************************
 
@@ -110,55 +110,67 @@ FROM nome_do_banco
 WHERE 
 ------------ LIKE -----------------
 	coluna1 LIKE '%dado_pesquis%';
-    coluna1 LIKE 'inicio%';     -- Começa com
-    coluna1 LIKE '%fim';        -- Termina com
+    coluna1 LIKE 'inicio%'     -- Começa com
+    coluna1 LIKE '%fim'        -- Termina com
 
 ------------ NOT LIKE -----------------
-	coluna1 NOT LIKE '%dado_pesquis%';
+	coluna1 NOT LIKE '%dado_pesquis%'
 
 ------------ IGUAL -----------------
-	coluna1 = 'dado_pesquisado_01';
+	coluna1 = 'dado_pesquisado_01'
 
 ------------ DIFERENTE -----------------
-	coluna1 <> 'dado_pesquisado_01';
+	coluna1 <> 'dado_pesquisado_01'
 
 ------------ MAIOR/MENOR/IGUAL -----------------
-    coluna1 > 100;
-    coluna1 >= 100;
-    coluna1 < 100;
-    coluna1 <= 100;
+    coluna1 > 100
+    coluna1 >= 100
+    coluna1 < 100
+    coluna1 <= 100
 
 ------------ OR -----------------
     coluna1 = 'dado_01' 
 	OR coluna2 = 'dado_02'
-	OR coluna3 = 'dado_03';
+	OR coluna3 = 'dado_03'
 
 ------------ E -----------------
     coluna1 = 'dado_01' 
 	AND coluna2 = 'dado_02'
-	AND coluna3 = 'dado_03';
+	AND coluna3 = 'dado_03'
 
 ------------ BETWEEN -----------------
-    coluna1 BETWEEN 100 AND 500;
+    coluna1 BETWEEN 100 AND 500
 
 ------------ IN -----------------
     coluna1 IN ('dado_01',
 	'dado_02', 
-	'dado_03');
+	'dado_03')
 
 ------------ NOT IN -----------------
     coluna1 NOT IN ('dado_01',
 	'dado_02', 
-	'dado_03');
+	'dado_03')
 
 ------------ NULL / NOT NULL -----------------
-    coluna1 IS NULL;
-    coluna1 IS NOT NULL;
+    coluna1 IS NULL
+    coluna1 IS NOT NULL
 
 ------------  DATAS/ENTRE DATAS -----------------
-    coluna1 BETWEEN '2024-01-01' AND '2024-12-31';
-    YEAR(coluna1) = 2024;
-    MONTH(coluna1) = 01;
+    coluna1 BETWEEN '2024-01-01' AND '2024-12-31'
+    YEAR(coluna1) = 2024
+    MONTH(coluna1) = 01
+
+------------  FILTRO DE DUPLICATAS -----------------
+WITH RANK1 AS (
+    SELECT 
+        *,
+        ROW_NUMBER() OVER (PARTITION BY Coluna ORDER BY (SELECT NULL)) AS ROW
+    FROM #BASE
+)
+SELECT *
+FROM RANK1 
+WHERE ROW = 1
+ORDER BY CPF
 
 ************************************ FIM PESQUISAS WHERE ************************************
 
@@ -199,10 +211,10 @@ coluna1;  -- DESC para decrescente, ASC é o padrão
     END,
 
 ------------ NULLS NO FINAL -----------------
-    coluna1 ASC NULLS LAST;   -- Nulos no final (SQL Server 2022+)
+    coluna1 ASC NULLS LAST   -- Nulos no final (SQL Server 2022+)
 
 ------------ ORDENAR ALEATÓRIO -----------------
-ORDER BY NEWID();  -- Ordem aleatória (SQL Server)
+ORDER BY NEWID()  -- Ordem aleatória (SQL Server)
 
 ************************************ FIM DE ORDENAR ************************************
 
@@ -221,14 +233,14 @@ SELECT
     MAX(data) AS ultimo,
     MIN(data) AS primeiro
 FROM nome_do_banco
-GROUP BY coluna1; 
+GROUP BY coluna1 
 
 -- Contagem de linhas dados da coluna
 SELECT 
     coluna1,
     COUNT(*) AS qtd
 FROM nome_do_banco
-GROUP BY coluna1;
+GROUP BY coluna1
 
 -- 2. MÚLTIPLAS AGREGAÇÕES
 SELECT 
@@ -238,7 +250,7 @@ SELECT
     AVG(nota_media) AS media,
     MAX(data_fundacao) AS maximo
 FROM nome_do_banco
-GROUP BY coluna1, coluna2;
+GROUP BY coluna1, coluna2
 
 -- 3. FILTRANDO GRUPOS (HAVING)
 SELECT 
@@ -248,7 +260,7 @@ SELECT
 FROM produtos
 GROUP BY categoria
 HAVING COUNT(*) > 10  -- Só categorias com +10 produtos
-    AND AVG(preco) > 50;  -- E preço médio > 50
+    AND AVG(preco) > 50  -- E preço médio > 50
 
 ************************************ FIM AGRUPAR ************************************
 
@@ -260,25 +272,25 @@ SELECT
     coluna1, 
     coluna2
 INTO #temp_01 
-FROM nome_da_tabela;
+FROM nome_da_tabela
 
 ------------ CRIAR ESTRUTURA SEM DADOS ------------
 DROP TABLE IF EXISTS #temp_vazia;
 SELECT TOP 0 * 
 INTO #temp_vazia 
-FROM nome_da_tabela;  -- Cria cópia da estrutura, sem dados
+FROM nome_da_tabela  -- Cria cópia da estrutura, sem dados
 
 ************************************ FIM CRIAR TEMPORÁRIAS ************************************
 
 ************************************ EDITAR TEMPORÁRIAS ************************************
 -- O DROP TABLE deve vir ANTES do SELECT INTO, não no meio!
 
-DROP TABLE IF EXISTS #temp_01;
+DROP TABLE IF EXISTS #temp_01
 SELECT
     coluna1,
     coluna2
 INTO #temp_01 
-FROM nome_da_tabela;
+FROM nome_da_tabela
 ------------ RETIRAR NULL ------------
 ISNULL(coluna1,'') AS novo_nome1,
 ISNULL(coluna2, 0) AS com_zero, 
@@ -288,36 +300,36 @@ NULLIF(coluna, 0) AS transforma_zero_em_null
 
 --------- EXCLUIR UMA LINHA INTEIRA ---------
 DELETE FROM #temp_01 
-WHERE coluna1 IS NULL;
+WHERE coluna1 IS NULL
 
 --------- LIMPAR/EXCLUIR TABELA INTEIRA MANTENDO CABEÇALHO ---------
-TRUNCATE TABLE #temp_01;
+TRUNCATE TABLE #temp_01
 
 --------- CRIAR CÓPIA EXATA ---------
 -- Estrutura + dados
 SELECT * 
 INTO #temp_copia 
-FROM #temp_original;
+FROM #temp_original
 
 -- Só estrutura (sem dados)
 SELECT TOP 0 * 
 INTO #temp_vazia 
-FROM #temp_original;
+FROM #temp_original
 
 ------------ RENOMEAR COLUNAS ------------ 
     coluna1 AS novo_nome1,
     coluna2 AS novo_nome2
 
 ------------ RENOMEAR COLUNA EXISTENTE ------------
-EXEC tempdb..sp_rename '#temp_01.coluna1', 'novo_nome', 'COLUMN'; --funciona fora da estrutura do SELECT
+EXEC tempdb..sp_rename '#temp_01.coluna1', 'novo_nome', 'COLUMN' --funciona fora da estrutura do SELECT
 
 --------- ACRESCENTAR COLUNA VAZIA COM CABEÇALHO ---------
 ALTER TABLE #temp_01 
-ADD idade INT;
+ADD idade INT
 
 --------- EXCLUIR COLUNAS ---------
 ALTER TABLE #temp_01 
-DROP COLUMN coluna1, coluna2;
+DROP COLUMN coluna1, coluna2
 
 -- ANTES: #temp_01
 ╔════╦═══════╗
@@ -328,10 +340,10 @@ DROP COLUMN coluna1, coluna2;
 ╚════╩═══════╝
 
 -- COMANDO (ERRADO - só ALTER TABLE)
-ALTER TABLE #temp_01;  -- ❌ ERRO! Não faz nada
+ALTER TABLE #temp_01  -- ❌ ERRO! Não faz nada
 
 -- COMANDO (CORRETO)
-ALTER TABLE #temp_01 ADD idade INT;  -- ✅ Funciona!
+ALTER TABLE #temp_01 ADD idade INT  -- ✅ Funciona!
 
 -- DEPOIS: #temp_01
 ╔════╦═══════╦═══════╗
@@ -343,7 +355,7 @@ ALTER TABLE #temp_01 ADD idade INT;  -- ✅ Funciona!
 
 --------- INSERIR VALORES DO SCRIPT NAS COLUNAS ---------
 INSERT INTO #temp_01 (coluna1, coluna2) 
-VALUES ('valor1', 'valor2'); 
+VALUES ('valor1', 'valor2')
 
 --------- INSERIR VALORES DO SCRIPT EM SEQUENCIA NAS COLUNAS ---------
 INSERT INTO #temp_01 (coluna1, coluna2) 
@@ -356,7 +368,7 @@ VALUES
 -- Atualização simples
 UPDATE #temp_01 
 SET coluna1 = 'novo_valor'
-WHERE id = 1;
+WHERE id = 1
 
 -- ANTES: #temp_01
 ╔════╦══════════╦═══════╗
@@ -370,7 +382,7 @@ WHERE id = 1;
 -- COMANDO
 UPDATE #temp_01 
 SET coluna1 = 'novo_valor'
-WHERE id = 1;
+WHERE id = 1
 
 -- DEPOIS: #temp_01 (só mudou o VALOR da linha 1)
 ╔════╦═════════════╦═══════╗
@@ -413,7 +425,7 @@ INNER JOIN outra_tabela o ON t.id = o.id; -- dados da coluna id em ambas que for
 UPDATE t
 SET t.coluna1 = o.valor_corrigido
 FROM #temp_01 t
-INNER JOIN tabela_origem o ON t.id = o.id;
+INNER JOIN tabela_origem o ON t.id = o.id
 
 -- DEPOIS: #temp_01 (só IDs 1 e 2 mudaram, 3 ficou igual!)
 ╔════╦═══════════════╦═══════╗
@@ -431,7 +443,7 @@ SET
     t.usuario = 'SISTEMA'
 FROM #temp_01 t
 INNER JOIN outra_tabela o ON t.id = o.id
-WHERE o.data_cadastro < '2020-01-01';  
+WHERE o.data_cadastro < '2020-01-01'  
 --------- CRIAR UMA NOVA TEMP #temp_uniao FORMADA POR COLUNAS DE #temp_a COM ACRÉSCIMO DE DADOS DAS COLUNAS DE #temp_b ABAIXO ---------
 -- UNION (empilha)
 SELECT * 
@@ -491,7 +503,7 @@ SELECT
 INTO #temp_join
 FROM #temp_a a
 LEFT JOIN #temp_b b ON a.id = b.id
-INNER JOIN #temp_c c ON a.id = c.id;
+INNER JOIN #temp_c c ON a.id = c.id
 
 -- ANTES: #temp_a
 ╔════╦════════╗
@@ -527,7 +539,7 @@ SELECT
 INTO #temp_join
 FROM #temp_a a
 LEFT JOIN #temp_b b ON a.id = b.id      -- Tudo de A + match B
-INNER JOIN #temp_c c ON a.id = c.id;    -- Só IDs que existem em C
+INNER JOIN #temp_c c ON a.id = c.id    -- Só IDs que existem em C
 
 -- DEPOIS: #temp_join
 ╔════╦════════╦═════════════╦══════════════╗
@@ -549,7 +561,7 @@ WHEN MATCHED THEN
         destino.valor = origem.valor
 WHEN NOT MATCHED THEN
     INSERT (id, nome, valor)
-    VALUES (origem.id, origem.nome, origem.valor);
+    VALUES (origem.id, origem.nome, origem.valor)
 
 -- ANTES: #temp_destino
 ╔════╦════════╦═══════╗
@@ -577,7 +589,7 @@ WHEN MATCHED THEN
         destino.valor = origem.valor
 WHEN NOT MATCHED THEN
     INSERT (id, nome, valor)
-    VALUES (origem.id, origem.nome, origem.valor);
+    VALUES (origem.id, origem.nome, origem.valor)
 
 -- DEPOIS: #temp_destino
 ╔════╦════════╦═══════╗
@@ -594,7 +606,7 @@ SELECT
     *,
     ROW_NUMBER() OVER (ORDER BY data DESC) AS ordem_prioridade
 INTO #temp_ordenada
-FROM #temp_01;
+FROM #temp_01
 
 -- ANTES: #temp_01 (sem ordem garantida)
 ╔════╦════════════╦═══════╗
@@ -610,7 +622,7 @@ SELECT
     *,
     ROW_NUMBER() OVER (ORDER BY data DESC) AS ordem_prioridade
 INTO #temp_ordenada
-FROM #temp_01;
+FROM #temp_01
 
 -- DEPOIS: #temp_ordenada (ordem FÍSICA, não só exibição!)
 ╔════╦════════════╦═══════╦══════════════════╗
@@ -625,10 +637,10 @@ FROM #temp_01;
 
 --------- CHECAR ERROS ESPECÍFICOS E CORRIGÍ-LOS ---------
 ALTER TABLE #temp_01
-ADD CONSTRAINT pk_temp PRIMARY KEY (id);  -- Chave primária
+ADD CONSTRAINT pk_temp PRIMARY KEY (id)  -- Chave primária
 
 ALTER TABLE #temp_01
-ADD CONSTRAINT ck_idade CHECK (idade >= 0);  -- Regra de validação
+ADD CONSTRAINT ck_idade CHECK (idade >= 0)  -- Regra de validação
 
 -- ANTES: #temp_01 (sem restrições)
 ╔════╦════════╦═══════╗
@@ -641,26 +653,26 @@ ADD CONSTRAINT ck_idade CHECK (idade >= 0);  -- Regra de validação
 
 -- COMANDO 1: PK
 ALTER TABLE #temp_01
-ADD CONSTRAINT pk_temp PRIMARY KEY (id);  
+ADD CONSTRAINT pk_temp PRIMARY KEY (id)
 -- ❌ ERRO! Tem id duplicado (1,1)
 
 -- CORRIGINDO...
-DELETE FROM #temp_01 WHERE nome = 'Ana2';  -- Remove duplicata
+DELETE FROM #temp_01 WHERE nome = 'Ana2'  -- Remove duplicata
 
 ALTER TABLE #temp_01
-ADD CONSTRAINT pk_temp PRIMARY KEY (id);  
+ADD CONSTRAINT pk_temp PRIMARY KEY (id)  
 -- ✅ AGORA FUNCIONA!
 
 -- COMANDO 2: CHECK
 ALTER TABLE #temp_01
-ADD CONSTRAINT ck_idade CHECK (idade >= 0);
+ADD CONSTRAINT ck_idade CHECK (idade >= 0)
 -- ❌ ERRO! Tem idade negativa (-5)
 
 -- CORRIGINDO...
-UPDATE #temp_01 SET idade = 5 WHERE idade = -5;
+UPDATE #temp_01 SET idade = 5 WHERE idade = -5
 
 ALTER TABLE #temp_01
-ADD CONSTRAINT ck_idade CHECK (idade >= 0);
+ADD CONSTRAINT ck_idade CHECK (idade >= 0)
 -- ✅ AGORA FUNCIONA!
 
 -- DEPOIS: #temp_01
@@ -763,9 +775,7 @@ A: 3 ─┬─ 2
     │      João       │
     └─────────────────┘
 
-
 ************************************ FIM CONSULTAS JOIN ************************************
-
 
 
 
