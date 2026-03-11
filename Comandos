@@ -784,7 +784,7 @@ WHERE NOT EXISTS (
     FROM Basey B 
     WHERE B.ColunaB = A.ColunaA
 )
-ORDER BY ColunaA;
+ORDER BY ColunaA
 
 ************************************ FIM COMPARAR DUAS COLUNAS TIPO PROCV ************************************
 
