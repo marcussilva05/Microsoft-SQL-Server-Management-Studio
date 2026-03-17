@@ -788,6 +788,12 @@ ORDER BY ColunaA
 
 ************************************ FIM COMPARAR DUAS COLUNAS TIPO PROCV ************************************
 
+--TIPO DE DADOS DE TEMPORÁRIA
+EXEC tempdb..sp_help '#BASE'
+
+
+--TIPO DE DADOS DE TABELA
+EXEC sp_help 'CTG0226'
 
 
 
