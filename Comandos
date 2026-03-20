@@ -13,7 +13,7 @@
 	--BETWEEN é inclusivo (100 e 500 entram)
 ----------------------------------------------------------------------------
 */
-*************************** COMANDOS EATI *********************************
+*************************** COMANDOS EAT1 *********************************
 -- Criação de e-mails
 SELECT TOP 10 *, -- Seleciona as 10 primeiras linhas da consulta, e todas as colunas (*)            
               CASE  -- Inicia um CASE para lógica condicional                  
@@ -57,7 +57,7 @@ SELECT DISTINCT
 INTO #DIR 
 FROM CTG1225
 
-*************************** FIM COMANDOS EATI *********************************
+*************************** FIM COMANDOS EAT1 *********************************
 
 ************************************ AMBIENTAÇÃO ************************************
 
