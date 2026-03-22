@@ -1,0 +1,17 @@
+{	
+  //QUERY COLETIVA
+	"QUERY COLETIVA": {
+		"scope": "sql",
+		"prefix": "ZCOLET",
+		"body": [
+			"--QUERY COLETIVA",
+			"/*",
+			"	SOLICITAÇÃO",
+			"${1:COLE O TEXTO AQUI}",
+			"*/",
+			"-------------- SCRIPT COLETIVO --------------",
+			"",
+			"-------------- SCRIPT COLETIVO FIM --------------"
+		]
+		"description": "QUERY COLETIVA"
+	},
