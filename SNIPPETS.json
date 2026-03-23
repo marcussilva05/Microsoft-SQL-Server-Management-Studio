@@ -1,5 +1,5 @@
 {	
-  //QUERY COLETIVA
+	//QUERY COLETIVA
 	"QUERY COLETIVA": {
 		"scope": "sql",
 		"prefix": "ZCOLET",
@@ -12,6 +12,132 @@
 			"-------------- SCRIPT COLETIVO --------------",
 			"",
 			"-------------- SCRIPT COLETIVO FIM --------------"
-		]
+		],
 		"description": "QUERY COLETIVA"
 	},
+
+	//SELECT
+	"QUANTIDADE_DE_CARACTERES": {
+		"scope": "sql",
+		"prefix": "ZSEL",
+		"body": [
+			"SELECT *",
+			"FROM CTG${1:02}26"
+		],
+		"description": "CONTA A QUANTIDADE DE CARACTERES"
+	},
+
+	//USE_CEPEA_SAS
+	"USE_CEPEA_SAS": {
+		"scope": "sql",
+		"prefix": "ZUSE",
+		"body": [
+			"USE ${1:CEPEA_SAS}"
+		],
+		"description": "USE_CEPEA_SAS"
+	},
+
+	//TOP_10
+	"TOP_10": {
+		"scope": "sql",
+		"prefix": "ZTOP",
+		"body": [
+			"SELECT TOP 10*",
+			"FROM CTG${1:02}26"
+		],
+		"description": "TOP_10"
+	},
+
+	//QUANTIDADE_DE_CARACTERES
+	"QUANTIDADE_DE_CARACTERES": {
+		"scope": "sql",
+		"prefix": "ZQTDCHAR",
+		"body": [
+			"DATALENGTH(${1:coluna1}) AS BYTE"
+		],
+		"description": "CONTA A QUANTIDADE DE CARACTERES"
+	}, 
+
+	//RENOMEAR_TABELA
+	"RENOMEAR_TABELA": {
+		"scope": "sql",
+		"prefix": "ZRENTAB",
+		"body": [
+			"EXEC sp_rename '${1:nome_atual}', '${2:novo_nome}'"
+		],
+		"description": "RENOMEIA TABELA"
+	},
+
+	//BACKUP_DE_BD
+	"BACKUP_DE_BD": {
+		"scope": "sql",
+		"prefix": "ZBKPBD",
+		"body": [
+			"BACKUP DATABASE ${1:CNOME_BD} TO DISK = 'C:\ENDERECO_COMPLETO\NOME_BANCO_BACKUP.bak'"
+		],
+		"description": "BACKUP_DE_BD"
+	},
+
+	//BACKUP_DE_TABELA
+	"BACKUP_DE_TABELA": {
+		"scope": "sql",
+		"prefix": "ZBKPTAB",
+		"body": [
+			"INTO ${1:BD}_BKP_${2:DD}_${3:MM}_202${3:6}",
+			"FROM ${4:BD}"
+		],
+		"description": "BACKUP_DE_TABELA"
+	},
+
+	//CONCATENAR
+	"CONCATENAR": {
+		"scope": "sql",
+		"prefix": "ZCONC",
+		"body": [
+			"CONCAT('${1:col1}', '${2:col2}')"
+		],
+		"description": "CONCATENAR"
+	},
+
+	//EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA
+	"EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA": {
+		"scope": "sql",
+		"prefix": "ZEXTRCHAR",
+		"body": [
+			"${1:LEFT}${2:RIGHT}(${3:coluna}, ${4:3}) AS ${5:EXTRACAO_ESQUERDA}"
+		],
+		"description": "EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA"
+	},
+
+	//LIMPAR_ESPACOS_VAZIOS_DA_ESQUERDA_OU_DIREITA
+	"LIMPAR_ESPACOS_VAZIOS_DA_ESQUERDA_OU_DIREITA": {
+		"scope": "sql",
+		"prefix": "ZLIMP",
+		"body": [
+			"${1:LTRIM}${2:RTRIM}(${3:COLUNA}) AS LIMPA_${4:ESQUERDA}${5:DIREITA}"
+		],
+		"description": "LIMPAR_ESPACOS_VAZIOS_DA_ESQUERDA_OU_DIREITA"
+	},
+
+	//MUDAR_CARACTER_POR_OUTRO
+	"MUDAR_CARACTER_POR_OUTRO": {
+		"scope": "sql",
+		"prefix": "ZMUDCHAR",
+		"body": [
+			"REPLACE(${1:colnua1}, '${2:T}', '${3:M}') ${4:-- muda a coluna original onde é T vira M}",
+			"${5:--REPLACE(REPLACE(nome, 'T', 'M'), 't', 'm') AS coluna2 -- mantém coluna original e cria coluna editada}"
+		],
+		"description": "MUDAR_CARACTER_POR_OUTRO"
+	},
+
+	//EXTRAI_TRECHO_DE_STRING
+	"EXTRAI_TRECHO_DE_STRING": {
+		"scope": "sql",
+		"prefix": "ZEXTR",
+		"body": [
+			"SELECT SUBSTRING(${1:COLUNA}, ${2:1}, ${3:3}) AS ${4:EXTRATOR}",
+		],
+		"description": "EXTRAI_TRECHO_DE_STRING"
+	}
+
+}
