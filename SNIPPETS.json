@@ -119,6 +119,16 @@
 		"description": "LIMPAR_ESPACOS_VAZIOS_DA_ESQUERDA_OU_DIREITA"
 	},
 
+	//LIMPAR_TODOS_OS_ESPACOS_VAZIOS
+	"LIMPAR_TODOS_OS_ESPACOS_VAZIOS": {
+		"scope": "sql",
+		"prefix": "ZLIMP",
+		"body": [
+			"TRIM('     SQL Tutorial!     ') AS SEM_ESPACOS"
+		],
+		"description": "LIMPAR_TODOS_OS_ESPACOS_VAZIOS"
+	},
+
 	//MUDAR_CARACTER_POR_OUTRO
 	"MUDAR_CARACTER_POR_OUTRO": {
 		"scope": "sql",
@@ -135,9 +145,159 @@
 		"scope": "sql",
 		"prefix": "ZEXTR",
 		"body": [
-			"SELECT SUBSTRING(${1:COLUNA}, ${2:1}, ${3:3}) AS ${4:EXTRATOR}",
+			"SUBSTRING(${1:COLUNA}, ${2:1}, ${3:3}) AS ${4:EXTRATOR}",
 		],
 		"description": "EXTRAI_TRECHO_DE_STRING"
+	},
+
+	//TRANSFORMAR_NUMERO_EM_STRING
+	"TRANSFORMAR_NUMERO_EM_STRING": {
+		"scope": "sql",
+		"prefix": "ZEXTR",
+		"body": [
+			"STR(185.476, 6, 2)",
+		],
+		"description": "TRANSFORMAR_NUMERO_EM_STRING"
+	},
+
+	//DELETA_E_ACRESCENTA
+	"DELETA_E_ACRESCENTA": {
+		"scope": "sql",
+		"prefix": "ZDEL_ACRES",
+		"body": [
+			"STUFF('SQL Tutorial', 1, 3, 'HTML') -- COMEÇA DA POSIÇÃO CATRACTER 1, APAGA 3 CARACTERES A PARTIR DE 1 E ACRESCENTA HTML",
+		],
+		"description": "DELETA_E_ACRESCENTA"
+	},
+
+	//TRANSFORMAR_EM_MAIUSCULA
+	"TRANSFORMAR_EM_MAIUSCULA": {
+		"scope": "sql",
+		"prefix": "ZUPPER",
+		"body": [
+			"UPPER(${1:COLUNA})",
+		],
+		"description": "TRANSFORMAR_EM_MAIUSCULA"
+	},
+
+	//MÓDULO_DO_NUMERO
+	"MÓDULO_DO_NUMERO": {
+		"scope": "sql",
+		"prefix": "ZMOD",
+		"body": [
+			"Abs(-243.5) AS MODULO",
+		],
+		"description": "MÓDULO_DO_NUMERO"
+	},
+
+	//MEDIA
+	"MEDIA": {
+		"scope": "sql",
+		"prefix": "ZMED",
+		"body": [
+			"AVG(${1:COLUNA}) AS MEDIA",
+		],
+		"description": "MÉDIA"
+	},
+
+	//COUNT
+	"COUNT": {
+		"scope": "sql",
+		"prefix": "ZCOUNT",
+		"body": [
+			"COUNT(${1:COLUNA}) AS TOTAL",
+		],
+		"description": "COUNT"
+	},
+
+	//MAIOR
+	"MAIOR": {
+		"scope": "sql",
+		"prefix": "ZMAX",
+		"body": [
+			"MAX(${1:COLUNA}) AS MAIOR_VALOR",
+		],
+		"description": "MAIOR"
+	},
+
+	//MENOR
+	"MENOR": {
+		"scope": "sql",
+		"prefix": "ZMIN",
+		"body": [
+			"MIN(${1:COLUNA}) AS MENOR_VALOR",
+		],
+		"description": "MENOR"
+	},
+
+	//ARREDONDAR
+	"ARREDONDAR": {
+		"scope": "sql",
+		"prefix": "ZARRED",
+		"body": [
+			"ROUND(235.415, 0) AS ARREDONDADO",
+		],
+		"description": "ARREDONDAR"
+	},
+
+	//SOMAR
+	"SOMAR": {
+		"scope": "sql",
+		"prefix": "ZSUM",
+		"body": [
+			"SUM(${1:COLUNA}) AS SOMA",
+		],
+		"description": "SOMAR"
+	},
+
+	//DATA_ATUAL
+	"DATA_ATUAL": {
+		"scope": "sql",
+		"prefix": "ZDTATUAL",
+		"body": [
+			"CURRENT_TIMESTAMP",
+		],
+		"description": "DATA_ATUAL"
+	},
+
+	//EXTRAIR_DATA
+	"EXTRAIR_DATA": {
+		"scope": "sql",
+		"prefix": "ZDTEXTR",
+		"body": [
+			"DATENAME(YEAR, '2017/08/25') AS DATE -- YEAR, MONTH, DAY",
+		],
+		"description": "EXTRAIR_DATA"
+	},
+	
+	//CONVERTER
+	"CONVERTER": {
+		"scope": "sql",
+		"prefix": "ZCONVERT",
+		"body": [
+			"CONVERT(int, 25.65)",
+		],
+		"description": "CONVERTER"
+	},
+	
+	//IF
+	"IF": {
+		"scope": "sql",
+		"prefix": "ZIF",
+		"body": [
+			"IIF(${1:COLUNA}>1, 'YES', 'NO') -- =, <>, !=, >, <", 
+		],
+		"description": "IF"
+	},
+
+	//NULIFICA
+	"NULIFICA": {
+		"scope": "sql",
+		"prefix": "ZIF",
+		"body": [
+			"SELECT NULLIF(${1:COLUNA}, 25) AS SEM_25", 
+		],
+		"description": "NULIFICA"
 	}
 
 }
