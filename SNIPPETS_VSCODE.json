@@ -518,7 +518,7 @@
 		"scope": "sql",
 		"prefix": "ZBKPBD",
 		"body": [
-			"BACKUP DATABASE ${1:CNOME_BD} TO DISK = 'C:\ENDERECO_COMPLETO\NOME_BANCO_BACKUP.bak'"
+			"BACKUP DATABASE ${1:CNOME_BD} TO DISK = 'C:ENDERECO_COMPLETO_NOME_BANCO_BACKUP.bak'"
 		],
 		"description": "BACKUP_DE_BD"
 	},
