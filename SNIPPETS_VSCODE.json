@@ -91,27 +91,6 @@
     "description": "LISTAR TEBELAS"
   },
 
-  // TIPO_DADOS_TABELA
-  "TIPO_DADOS_TABELA": {
-    "scope": "sql",
-    "prefix": "ZSYSTIPDADO",
-    "body": [
-      "${2:EXEC sp_help '${1:nome_da_tabela}'}"    
-      ],
-    "description": "TIPO DE DADOS DA TABELA POR COLUNA"
-  },
-
-  // ALTERAR_TIPO_DADOS_TABELA
-  "ALTERAR_TIPO_DADOS_TABELA": {
-    "scope": "sql",
-    "prefix": "ZSYSALTERDADO",
-    "body": [
-      "ALTER TABLE ${1:tabela}",    
-      "${6:ALTER COLUMN ${2:coluna1} ${3:TIPO}(${4:tamanho}) NULL ${5:-- VERIFICAR ZCOLA}}"
-      ],
-    "description": "ALTERAR O TIPO DE DADO DA COLUNA"
-  },
-
   // COLUNAS_NA_VERTICAL
   "COLUNAS_NA_VERTICAL": {
     "scope": "sql",
@@ -544,6 +523,27 @@
 		],
 		"description": "CONCATENAR"
 	},
+
+  // TIPO_DADOS_TABELA
+  "TIPO_DADOS_TABELA": {
+    "scope": "sql",
+    "prefix": "ZDDTIPO",
+    "body": [
+      "${2:EXEC sp_help '${1:nome_da_tabela}'}"    
+      ],
+    "description": "TIPO DE DADOS DA TABELA POR COLUNA"
+  },
+
+  // ALTERAR_TIPO_DADOS_COLUNA
+  "ALTERAR_TIPO_DADOS_COLUNA": {
+    "scope": "sql",
+    "prefix": "ZDDALTERTIPO",
+    "body": [
+      "ALTER TABLE ${1:tabela}",    
+      "${6:ALTER COLUMN ${2:coluna1} ${3:TIPO}(${4:tamanho}) NULL ${5:-- VERIFICAR ZCOLA}}"
+      ],
+    "description": "ALTERAR O TIPO DE DADO DA COLUNA"
+  },
 
 	//EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA
 	"EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA": {
