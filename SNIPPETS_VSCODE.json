@@ -490,7 +490,7 @@
       "GROUP BY ${1:coluna1}",
       "ORDER BY ${2:TOTAL} DESC"
       ],
-    "description": "EXCLUIR_LINHAS_NULL"
+    "description": "CONTAR E AGRUPAR"
   },	
 
 	//QUANTIDADE_DE_CARACTERES
@@ -644,16 +644,6 @@
 			"AVG(${1:COLUNA}) AS MEDIA",
 		],
 		"description": "MÉDIA"
-	},
-
-	//COUNT
-	"COUNT": {
-		"scope": "sql",
-		"prefix": "ZCOUNT",
-		"body": [
-			"COUNT(${1:COLUNA}) AS TOTAL",
-		],
-		"description": "COUNT"
 	},
 
 	//MAIOR
