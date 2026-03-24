@@ -722,4 +722,14 @@
 		"description": "NULIFICA"
 	}
 
+	// JOIN
+  "JOIN": {
+    "scope": "sql",
+    "prefix": "ZJOIN",
+    "body": [
+      "${1:LEFT} JOIN ${2:Tabela} ${3:B} ON ${4:A}.${5:coluna} = ${6:B}.${7:coluna}"
+    ],
+    "description": "JOIN"
+  }
+
 }
