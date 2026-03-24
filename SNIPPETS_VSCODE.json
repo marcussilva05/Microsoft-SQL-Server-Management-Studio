@@ -327,20 +327,6 @@
     "description": "EXTRAI REGISTROS DE TEMPOS COMPOSTOS DD/MM/YYYY HH:MM:SS"
   },
 
-  // QUANTIDADE_DE_CARACTERES
-  "QUANTIDADE_DE_CARACTERES": {
-    "scope": "sql",
-    "prefix": "ZDDQTDCHAR",
-    "body": [
-      "${3:SELECT DISTINCT                                                               }",
-      "    ${1:coluna1},",
-      "    LEN(${1:coluna1}) AS QTD_CARACTERES",
-      "   FROM ${2:tabela}",
-      "   ORDER BY LEN(${1:coluna1}) DESC"
-    ],
-    "description": "QUANTIDADE_DE_CARACTERES"
-  },  
-
   // COLA_DE_DADOS
   "COLA_DE_DADOS": {
     "scope": "sql",
@@ -447,7 +433,7 @@
   // EXCLUIR_LINHAS_NULL
   "EXCLUIR_LINHAS_NULL": {
     "scope": "sql",
-    "prefix": "ZEXCLULINU",
+    "prefix": "ZEXCLLINULL",
     "body": [
       "DELETE FROM ${1:tabela}",
       "WHERE ${2:coluna1} IS NULL",
@@ -475,12 +461,12 @@
 	//QUANTIDADE_DE_CARACTERES
 	"QUANTIDADE_DE_CARACTERES": {
 		"scope": "sql",
-		"prefix": "ZQTDCHAR",
+		"prefix": "ZDDQTDCHAR",
 		"body": [
 			"DATALENGTH(${1:coluna1}) AS BYTE"
 		],
 		"description": "CONTA A QUANTIDADE DE CARACTERES"
-	}, 
+	},  
 
 	//RENOMEAR_TABELA
 	"RENOMEAR_TABELA": {
@@ -508,8 +494,8 @@
 		"prefix": "ZBKPTAB",
 		"body": [
      	    "SELECT *",
-			"INTO ${1:BD}_BKP_${2:DD}_${3:MM}_202${3:6}",
-			"FROM ${4:BD}"
+			"INTO #BKP",
+			"FROM ${1:BD}" -- depois INTO BD_BKP FROM #BKP
 		],
 		"description": "BACKUP_DE_TABELA"
 	},
@@ -548,7 +534,7 @@
 	//EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA
 	"EXTRAIR_CARACTERES_DA_ESQUERDA_OU_DIREITA": {
 		"scope": "sql",
-		"prefix": "ZEXTRCHAR",
+		"prefix": "ZDDEXTRCHAR",
 		"body": [
 			"${1:LEFT}${2:RIGHT}(${3:coluna}, ${4:3}) AS ${5:EXTRACAO_ESQUERDA}"
 		],
@@ -558,7 +544,7 @@
 	//LIMPAR_ESPACOS_VAZIOS_DA_ESQUERDA_OU_DIREITA
 	"LIMPAR_ESPACOS_VAZIOS_DA_ESQUERDA_OU_DIREITA": {
 		"scope": "sql",
-		"prefix": "ZLIMP",
+		"prefix": "ZDDLIMP1",
 		"body": [
 			"${1:LTRIM}${2:RTRIM}(${3:COLUNA}) AS LIMPA_${4:ESQUERDA}${5:DIREITA}"
 		],
@@ -568,7 +554,7 @@
 	//LIMPAR_TODOS_OS_ESPACOS_VAZIOS
 	"LIMPAR_TODOS_OS_ESPACOS_VAZIOS": {
 		"scope": "sql",
-		"prefix": "ZLIMP",
+		"prefix": "ZDDLIMP",
 		"body": [
 			"TRIM('     SQL Tutorial!     ') AS SEM_ESPACOS"
 		],
@@ -578,7 +564,7 @@
 	//MUDAR_CARACTER_POR_OUTRO
 	"MUDAR_CARACTER_POR_OUTRO": {
 		"scope": "sql",
-		"prefix": "ZMUDCHAR",
+		"prefix": "ZDDMUDCHAR",
 		"body": [
 			"REPLACE(${1:colnua1}, '${2:T}', '${3:M}') ${4:-- muda a coluna original onde é T vira M}",
 			"${5:--REPLACE(REPLACE(nome, 'T', 'M'), 't', 'm') AS coluna2 -- mantém coluna original e cria coluna editada}"
@@ -589,7 +575,7 @@
 	//EXTRAI_TRECHO_DE_STRING
 	"EXTRAI_TRECHO_DE_STRING": {
 		"scope": "sql",
-		"prefix": "ZEXTR",
+		"prefix": "ZDDEXTR",
 		"body": [
 			"SUBSTRING(${1:COLUNA}, ${2:1}, ${3:3}) AS ${4:EXTRATOR}",
 		],
@@ -599,7 +585,7 @@
 	//TRANSFORMAR_NUMERO_EM_STRING
 	"TRANSFORMAR_NUMERO_EM_STRING": {
 		"scope": "sql",
-		"prefix": "ZEXTR",
+		"prefix": "ZDDNUM2STR",
 		"body": [
 			"STR(185.476, 6, 2)",
 		],
@@ -609,7 +595,7 @@
 	//DELETA_E_ACRESCENTA
 	"DELETA_E_ACRESCENTA": {
 		"scope": "sql",
-		"prefix": "ZDEL_ACRES",
+		"prefix": "ZDDDEL_ACRES",
 		"body": [
 			"STUFF('SQL Tutorial', 1, 3, 'HTML') -- COMEÇA DA POSIÇÃO CATRACTER 1, APAGA 3 CARACTERES A PARTIR DE 1 E ACRESCENTA HTML",
 		],
@@ -619,7 +605,7 @@
 	//TRANSFORMAR_EM_MAIUSCULA
 	"TRANSFORMAR_EM_MAIUSCULA": {
 		"scope": "sql",
-		"prefix": "ZUPPER",
+		"prefix": "ZDDUPPER",
 		"body": [
 			"UPPER(${1:COLUNA})",
 		],
@@ -699,7 +685,7 @@
 	//EXTRAIR_DATA
 	"EXTRAIR_DATA": {
 		"scope": "sql",
-		"prefix": "ZDTEXTR",
+		"prefix": "ZDDEXTRDATA",
 		"body": [
 			"DATENAME(YEAR, '2017/08/25') AS DATE -- YEAR, MONTH, DAY",
 		],
@@ -709,7 +695,7 @@
 	//CONVERTER
 	"CONVERTER": {
 		"scope": "sql",
-		"prefix": "ZCONVERT",
+		"prefix": "ZDDCONVERT",
 		"body": [
 			"CONVERT(int, 25.65)",
 		],
@@ -729,7 +715,7 @@
 	//NULIFICA
 	"NULIFICA": {
 		"scope": "sql",
-		"prefix": "ZIF",
+		"prefix": "ZNULLIF",
 		"body": [
 			"SELECT NULLIF(${1:COLUNA}, 25) AS SEM_25", 
 		],
