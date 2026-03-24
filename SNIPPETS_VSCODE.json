@@ -225,7 +225,7 @@
       // EXTRAIR ZEROS RG 12
   "EXTRAIR_ZEROS_RG_12": {
     "scope": "sql",
-    "prefix": "ZRG",
+    "prefix": "ZDDRG",
     "body": [
       "${1:LEFT(NR_RG, 12) AS RG_TRUNCADO,}"
     ],
@@ -315,7 +315,7 @@
   // EXTRAI_TEMPO
   "EXTRAI_TEMPO": {
     "scope": "sql",
-    "prefix": "ZTEMP",
+    "prefix": "ZDDTEMP",
     "body": [
       "YEAR(A.create_date) AS ANO_TABELA",
       "MONTH(A.create_date) AS MES_TABELA,",
@@ -330,7 +330,7 @@
   // QUANTIDADE_DE_CARACTERES
   "QUANTIDADE_DE_CARACTERES": {
     "scope": "sql",
-    "prefix": "ZQTDCHAR",
+    "prefix": "ZDDQTDCHAR",
     "body": [
       "${3:SELECT DISTINCT                                                               }",
       "    ${1:coluna1},",
@@ -378,14 +378,14 @@
     "description": "Cola de tipos de dados SQL Server"
   },
 
-  // ID_CRIANDO_TABELA
-  "ID_CRIANDO_TABELA": {
+  // ID_PRIMRIRA_VEZ
+  "ID_PRIMRIRA_VEZ": {
     "scope": "sql",
     "prefix": "ZID",
     "body": [
       "${1:ID INT IDENTITY(1,1) PRIMARY KEY}"    
       ],
-    "description": "CRIAR TABELA COM ID"
+    "description": "ID_PRIMRIRA_VEZ"
   },
 
   // ID_ACRESCENTADO_EM_COLUNA
