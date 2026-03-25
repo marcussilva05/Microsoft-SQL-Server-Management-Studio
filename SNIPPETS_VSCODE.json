@@ -744,6 +744,19 @@
       "${1:LEFT} JOIN ${2:Tabela} ${3:B} ON ${4:A}.${5:coluna} = ${6:B}.${7:coluna}"
     ],
     "description": "JOIN"
+  },
+
+	// TRATAMENTO_DE_DADOS
+  "TRATAMENTO_DE_DADOS": {
+    "scope": "sql",
+    "prefix": "ZDDTRAT",
+    "body": [
+	  "${1:CASE}",
+	  "      WHEN ${2:COLUNA} ${3:IS NOT NULL} THEN REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(NOMEUA_COMPLETO, 'Á', 'A'), 'Ã', 'A'), 'À', 'A'), 'Â', 'A'), 'É', 'E'), 'Ê', 'E'), 'Ó', 'O'), 'Õ', 'O'), 'Ú', 'U'), 'Ü', 'U'), 'Ç', 'C'), 'Ñ', 'N')",
+	  "     ${1:ELSE COLUNA}",
+	  "${1:END AS COLUNA}"
+    ],
+    "description": "TRATAR DADOS RETIRANDO CARACTERES ESPECÍFICOS"
   }
 
 }
