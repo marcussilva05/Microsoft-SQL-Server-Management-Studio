@@ -722,7 +722,21 @@
 		"description": "NULIFICA"
 	}
 
-	// JOIN
+	// CASE_WHEN
+  "CASE_WHEN": {
+    "scope": "sql",
+    "prefix": "ZCASE",
+    "body": [
+      "CASE",
+      "   WHEN ${1:SITUACAO1} THEN ${2:SITUACAO2}",
+      "   ${3:WHEN ${4:SITUACAO1} THEN ${5:SITUACAO2}}",
+      "   ELSE ${6:SITUACAO3}",
+      "END AS ${7:COLUNA}"
+    ],
+    "description": "CASE_WHEN"
+  },
+
+  // JOIN
   "JOIN": {
     "scope": "sql",
     "prefix": "ZJOIN",
