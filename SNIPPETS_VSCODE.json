@@ -746,7 +746,7 @@
     "description": "JOIN"
   },
 
-	// TRATAMENTO_DE_DADOS
+  // TRATAMENTO_DE_DADOS
   "TRATAMENTO_DE_DADOS": {
     "scope": "sql",
     "prefix": "ZDDTRAT",
@@ -757,6 +757,40 @@
 	  "${1:END AS COLUNA}"
     ],
     "description": "TRATAR DADOS RETIRANDO CARACTERES ESPECÍFICOS"
+  },
+
+  // COMPARAR_DADOS_DE_TABELAS_DIFERENTES
+  "COMPARAR_DADOS_DE_TABELAS_DIFERENTES": {
+    "scope": "sql",
+    "prefix": "ZDDCOMPTABLE",
+    "body": [
+	  "SELECT",
+      "     CPF",
+	  "FROM #BASE1 A",
+	  "WHERE EXISTS (  -- ou NOT EXISTS",
+	  "SELECT",
+      "     CPF",
+	  "FROM #BASE2 B",
+	  "WHERE A.CPF = B.CPF)"
+    ],
+    "description": "COMPARAR_DADOS_DE_TABELAS_DIFERENTES"
+  },
+
+  // CALCULO_DE_DATA
+  "CALCULO_DE_DATA": {
+    "scope": "sql",
+    "prefix": "ZDDCOMPTABLE",
+    "body": [
+	  "SELECT",
+      "     CPF",
+	  "FROM #BASE1 A",
+	  "WHERE EXISTS (  -- ou NOT EXISTS",
+	  "SELECT",
+      "     CPF",
+	  "FROM #BASE2 B",
+	  "WHERE A.CPF = B.CPF)"
+    ],
+    "description": "CALCULO_DE_DATA"
   }
 
 }
