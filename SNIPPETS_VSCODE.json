@@ -495,7 +495,7 @@
 		"body": [
      	    "SELECT *",
 			"INTO #BKP",
-			"FROM ${1:BD}" -- depois INTO BD_BKP FROM #BKP
+			"FROM ${1:BD} -- depois INTO BD_BKP FROM #BKP" 
 		],
 		"description": "BACKUP_DE_TABELA"
 	},
@@ -720,7 +720,7 @@
 			"SELECT NULLIF(${1:COLUNA}, 25) AS SEM_25", 
 		],
 		"description": "NULIFICA"
-	}
+	},
 
 	// CASE_WHEN
   "CASE_WHEN": {
